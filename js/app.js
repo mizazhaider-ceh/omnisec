@@ -1,7 +1,7 @@
 /* =====================================================================
    The OmniSec Roadmap: Application Logic
    Author: Muhammad Izaz Haider
-   Vanilla JS. State in localStorage. Cards expand into full lessons.
+   Vanilla JS. State in localStorage. Quest-path UI with lesson drawer.
    ===================================================================== */
 (function () {
   "use strict";
@@ -18,7 +18,8 @@
     lang:   localStorage.getItem(LS.lang)  || detectLang(),
     theme:  localStorage.getItem(LS.theme) || "dark",
     filter: localStorage.getItem(LS.filter) || "all",
-    query:  ""
+    query:  "",
+    lesson: null   // currently open lesson node id
   };
 
   // ---------- helpers ----------
@@ -30,10 +31,17 @@
     const n = (navigator.language || "en").slice(0,2);
     return I18N.LANGS.some(l => l.c === n) ? n : "en";
   }
-  function allNodes(){
+  function orderedNodes(){
     const out = [];
-    ROADMAP.forEach(p => p.stages.forEach(s => s.nodes.forEach(n => out.push(n))));
+    ROADMAP.forEach((p, pi) => p.stages.forEach((s, si) =>
+      s.nodes.forEach((n, ni) => out.push({ p, s, n, pi, si, ni }))));
     return out;
+  }
+  function findRef(id){
+    return orderedNodes().find(r => r.n.id === id) || null;
+  }
+  function nextRef(){
+    return orderedNodes().find(r => !isDone(r.n.id)) || null;
   }
   function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -43,16 +51,20 @@
     if (state.done[id]) delete state.done[id]; else state.done[id] = 1;
     save(LS.done, state.done);
     updateProgress();
+    refreshNextHint();
     document.querySelectorAll(`[data-node="${id}"]`).forEach(card=>{
       card.classList.toggle("is-done", isDone(id));
+      card.classList.toggle("done", isDone(id));
       const chk = card.querySelector(".chk");
       if (chk) chk.setAttribute("aria-checked", isDone(id));
     });
-    refreshPhaseCounters();
+    // re-render path so the "next" marker moves
+    renderRoadmap(); observeAll();
+    if (state.lesson) paintDrawer(state.lesson);
   }
   function progressNums(){
-    const nodes = allNodes(), total = nodes.length;
-    const done = nodes.filter(n => isDone(n.id)).length;
+    const nodes = orderedNodes(), total = nodes.length;
+    const done = nodes.filter(r => isDone(r.n.id)).length;
     return { done, total, pct: total ? Math.round(done/total*100) : 0 };
   }
   function updateProgress(){
@@ -72,8 +84,15 @@
       if (badge) badge.textContent = `${done}/${uniq.length}`;
     });
   }
+  function refreshNextHint(){
+    const nx = nextRef();
+    const hint = el("nextHint");
+    if (!hint) return;
+    if (!nx){ hint.innerHTML = "🏆 " + esc(t("allDone")); return; }
+    hint.innerHTML = `<span class="nh-k">${esc(t("upNext"))}</span> <b>${esc(nx.n.t)}</b> <span class="nh-p">${esc(nx.p.phase)}</span>`;
+  }
 
-  // ---------- matching ----------
+  // ---------- matching (search / gems filter) ----------
   function matches(node){
     if (state.filter === "skip" && !node.skip) return false;
     const q = state.query.trim().toLowerCase();
@@ -83,122 +102,206 @@
                  (node.res||[]).map(r=>r.t).join(" ")].join(" ").toLowerCase();
     return hay.includes(q);
   }
+  function listMode(){
+    return state.query.trim() !== "" || state.filter === "skip";
+  }
 
   // ---------- rendering ----------
   function renderRoadmap(){
     const root = el("roadmap");
     root.innerHTML = "";
-    let visibleTotal = 0;
+    if (listMode()) renderResults(root);
+    else renderPath(root);
+    el("empty").hidden = root.children.length !== 0;
+    refreshPhaseCounters();
+    refreshNextHint();
+  }
+
+  function phaseHead(phase, pi, visCount){
+    return `
+      <div class="phase-head">
+        <div class="mascot" data-phase="${phase.id}" title="${esc(phase.phase)}">
+          ${CHARACTERS.byPhase[phase.id] || CHARACTERS.hero}
+        </div>
+        <div class="phase-meta">
+          <div class="phase-kicker">${phase.icon} ${esc(t("phases"))} ${pi+1}</div>
+          <h2 class="phase-title">${esc(phase.phase)}</h2>
+          <p class="phase-blurb">${esc(phase.blurb)}</p>
+          <div class="phase-prog"><span>0/${visCount}</span></div>
+        </div>
+      </div>`;
+  }
+
+  // --- quest path mode ---
+  function renderPath(root){
+    const nx = nextRef();
+    const nextId = nx ? nx.n.id : null;
 
     ROADMAP.forEach((phase, pi) => {
-      const visNodes = [];
-      phase.stages.forEach(s => s.nodes.forEach(n => { if (matches(n)) visNodes.push(n); }));
-      if (!visNodes.length) return;
-      visibleTotal += visNodes.length;
-
       const phaseEl = document.createElement("section");
       phaseEl.className = "phase";
-      const doneInPhase = visNodes.filter(n => isDone(n.id)).length;
-      phaseEl.innerHTML = `
-        <div class="phase-head">
-          <div class="mascot" data-phase="${phase.id}" title="${esc(phase.phase)}">
-            ${CHARACTERS.byPhase[phase.id] || CHARACTERS.hero}
-          </div>
-          <div class="phase-meta">
-            <div class="phase-kicker">${phase.icon} ${esc(t("phases"))} ${pi+1}</div>
-            <h2 class="phase-title">${esc(phase.phase)}</h2>
-            <p class="phase-blurb">${esc(phase.blurb)}</p>
-            <div class="phase-prog"><span>${doneInPhase}/${visNodes.length}</span></div>
-          </div>
-        </div>`;
-
-      const stagesWrap = document.createElement("div");
-      stagesWrap.className = "stages";
-      let stepNum = 0;
+      let total = 0;
+      phase.stages.forEach(s => { total += s.nodes.length; });
+      phaseEl.innerHTML = phaseHead(phase, pi, total);
 
       phase.stages.forEach(stage => {
-        const sNodes = stage.nodes.filter(matches);
-        if (!sNodes.length) return;
         const stageEl = document.createElement("div");
         stageEl.className = "stage";
         stageEl.innerHTML = `<h3 class="stage-title"><span class="stage-dot"></span>${esc(stage.title)}</h3>`;
-        const grid = document.createElement("div");
-        grid.className = "node-grid";
-        sNodes.forEach(n => { stepNum++; grid.appendChild(card(n, stepNum)); });
-        stageEl.appendChild(grid);
-        stagesWrap.appendChild(stageEl);
+        const path = document.createElement("div");
+        path.className = "path";
+        stage.nodes.forEach(n => path.appendChild(pathNode(n, n.id === nextId)));
+        stageEl.appendChild(path);
+        phaseEl.appendChild(stageEl);
       });
 
-      phaseEl.appendChild(stagesWrap);
       root.appendChild(phaseEl);
     });
-
-    el("empty").hidden = visibleTotal !== 0;
   }
 
+  function pathNode(n, isNext){
+    const a = document.createElement("article");
+    a.className = "pnode" + (isDone(n.id) ? " done" : "") + (isNext ? " next" : "");
+    a.dataset.node = n.id;
+    a.tabIndex = 0;
+    a.setAttribute("role", "button");
+    a.setAttribute("aria-label", n.t);
+
+    const lvName = LEVELS[n.lv] || "";
+    a.innerHTML = `
+      <span class="pnode-dot"><span class="pnode-num">✓</span></span>
+      <span class="pnode-card">
+        ${isNext ? `<span class="pnode-flag">🎯 ${esc(t("upNext"))}</span>` : ``}
+        <span class="pnode-title">${esc(n.t)} ${n.skip ? `<span class="skip-flag" title="${esc(t("skipBadge"))}">⭐</span>` : ``}</span>
+        <span class="pnode-desc">${esc(n.d)}</span>
+        <span class="pnode-meta">
+          ${lvName ? `<span class="lv lv-${n.lv}">${esc(lvName)}</span>` : ``}
+          ${n.time ? `<span class="time">⏱ ${esc(n.time)}</span>` : ``}
+          ${n.skip ? `<span class="gem">⭐ ${esc(t("gemTag"))}</span>` : ``}
+        </span>
+      </span>
+      <button class="chk pnode-chk" aria-checked="${isDone(n.id)}" aria-label="${esc(t("markDone"))}" title="${esc(t("markDone"))}"></button>`;
+
+    a.addEventListener("click", e => {
+      if (e.target.closest(".pnode-chk")) return;
+      openLesson(n.id);
+    });
+    a.addEventListener("keydown", e => {
+      if (e.target.closest(".pnode-chk")) return;
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openLesson(n.id); }
+    });
+    const chk = a.querySelector(".pnode-chk");
+    chk.addEventListener("click", e => { e.stopPropagation(); toggle(n.id); });
+    return a;
+  }
+
+  // --- results list mode (search / gems) ---
+  function renderResults(root){
+    const refs = orderedNodes().filter(r => matches(r.n));
+    const wrap = document.createElement("div");
+    wrap.className = "results";
+    refs.forEach(r => {
+      const row = document.createElement("article");
+      row.className = "res-row" + (isDone(r.n.id) ? " done" : "");
+      row.dataset.node = r.n.id;
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+      const lvName = LEVELS[r.n.lv] || "";
+      row.innerHTML = `
+        <span class="chk" role="checkbox" aria-checked="${isDone(r.n.id)}" aria-label="${esc(t("markDone"))}"></span>
+        <span class="res-main">
+          <span class="res-title">${esc(r.n.t)} ${r.n.skip ? "⭐" : ""}</span>
+          <span class="res-sub">${esc(r.p.phase)} · ${esc(r.s.title)}${lvName ? " · " + esc(lvName) : ""}${r.n.time ? " · ⏱ " + esc(r.n.time) : ""}</span>
+        </span>
+        <span class="res-go">→</span>`;
+      row.addEventListener("click", e => {
+        if (e.target.closest(".chk")) return;
+        openLesson(r.n.id);
+      });
+      row.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openLesson(r.n.id); }
+      });
+      const chk = row.querySelector(".chk");
+      chk.addEventListener("click", e => { e.stopPropagation(); toggle(r.n.id); });
+      wrap.appendChild(row);
+    });
+    root.appendChild(wrap);
+  }
+
+  // ---------- lesson drawer ----------
   function list(items, icon){
     return `<ul class="d-list">${items.map(i=>`<li><span class="li-ico">${icon}</span><span>${esc(i)}</span></li>`).join("")}</ul>`;
   }
 
-  function card(n, num){
-    const c = document.createElement("article");
-    c.className = "node" + (isDone(n.id) ? " is-done" : "") + (n.skip ? " is-skip" : "");
-    c.dataset.node = n.id;
+  function openLesson(id){
+    state.lesson = id;
+    paintDrawer(id);
+    el("scrim").hidden = false;
+    el("drawer").hidden = false;
+    requestAnimationFrame(()=> document.body.classList.add("dw-open"));
+    document.body.style.overflow = "hidden";
+  }
+  function closeLesson(){
+    state.lesson = null;
+    document.body.classList.remove("dw-open");
+    document.body.style.overflow = "";
+    setTimeout(()=>{ el("scrim").hidden = true; el("drawer").hidden = true; }, 320);
+  }
 
+  function paintDrawer(id){
+    const ref = findRef(id);
+    if (!ref) return;
+    const { p, s, n } = ref;
     const lvName = LEVELS[n.lv] || "";
-    const tools = (n.tools||[]).map(tl => `<span class="tool">${esc(tl)}</span>`).join("");
+    const tools = (n.tools||[]).map(x => `<span class="tool">${esc(x)}</span>`).join("");
     const res = (n.res||[]).map(r =>
       `<a class="res" href="${esc(r.u)}" target="_blank" rel="noopener">🔗 ${esc(r.t)}</a>`).join("");
-
     const learnBlock = (n.learn&&n.learn.length) ? `<div class="d-sec"><h5>🎯 ${esc(t("learnHdr"))}</h5>${list(n.learn,"•")}</div>` : "";
     const doBlock    = (n.do&&n.do.length)       ? `<div class="d-sec"><h5>🛠️ ${esc(t("doHdr"))}</h5>${list(n.do,"›")}</div>` : "";
     const resBlock   = res ? `<div class="d-sec"><h5>📚 ${esc(t("resHdr"))}</h5><div class="res-wrap">${res}</div></div>` : "";
     const toolBlock  = tools ? `<div class="d-sec d-tools"><h5>🧰 ${esc(t("tools"))}</h5><div class="tools">${tools}</div></div>` : "";
     const tipBlock   = (n.skip && n.tip) ? `<div class="tipbox"><b>💡 ${esc(t("tipHdr"))}:</b> ${esc(n.tip)}</div>` : "";
 
-    c.innerHTML = `
-      <div class="node-head">
-        <span class="chk" role="checkbox" tabindex="0" aria-checked="${isDone(n.id)}" aria-label="${esc(t('markDone'))}"></span>
-        <div class="node-headtext">
-          <div class="node-titleline">
-            <span class="stepno">${num}</span>
-            <h4 class="node-title">${esc(n.t)}</h4>
-            ${n.skip ? `<span class="skip-flag" title="${esc(t('skipBadge'))}">⭐</span>` : ``}
-          </div>
-          <p class="node-desc">${esc(n.d)}</p>
-          <div class="node-badges">
-            ${lvName ? `<span class="lv lv-${n.lv}">${esc(lvName)}</span>` : ``}
-            ${n.time ? `<span class="time">⏱ ${esc(n.time)}</span>` : ``}
-            ${n.skip ? `<span class="gem">⭐ ${esc(t('gemTag'))}</span>` : ``}
-          </div>
-        </div>
-        <button class="chev" aria-label="${esc(t('expand'))}" aria-expanded="false">▾</button>
-      </div>
-      <div class="node-body" hidden>
-        ${tipBlock}${learnBlock}${doBlock}${toolBlock}${resBlock}
-      </div>`;
+    el("dwCrumb").textContent = `${p.phase} · ${s.title}`;
+    el("dwTitle").textContent = n.t;
+    el("dwBadges").innerHTML =
+      (lvName ? `<span class="lv lv-${n.lv}">${esc(lvName)}</span>` : ``) +
+      (n.time ? `<span class="time">⏱ ${esc(n.time)}</span>` : ``) +
+      (n.skip ? `<span class="gem">⭐ ${esc(t("gemTag"))}</span>` : ``) +
+      (isDone(n.id) ? `<span class="gem done-tag">✓ ${esc(t("completedTag"))}</span>` : ``);
+    el("dwBody").innerHTML = tipBlock + learnBlock + doBlock + toolBlock + resBlock;
 
-    // expand / collapse (header, but not the checkbox)
-    const head = c.querySelector(".node-head");
-    const body = c.querySelector(".node-body");
-    const chev = c.querySelector(".chev");
-    function setOpen(open){
-      c.classList.toggle("open", open);
-      body.hidden = !open;
-      chev.setAttribute("aria-expanded", open);
-    }
-    head.addEventListener("click", e => {
-      if (e.target.closest(".chk")) return;          // checkbox handles itself
-      setOpen(!c.classList.contains("open"));
-    });
+    const doneBtn = el("dwDone");
+    doneBtn.innerHTML = isDone(n.id)
+      ? `${esc(t("nextLesson"))} →`
+      : `✓ ${esc(t("markCompleteNext"))}`;
 
-    // mark done (checkbox only)
-    const chk = c.querySelector(".chk");
-    const doToggle = e => { e.preventDefault(); e.stopPropagation(); toggle(n.id); };
-    chk.addEventListener("click", doToggle);
-    chk.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" ") doToggle(e); });
+    // prev/next availability
+    const all = orderedNodes();
+    const idx = all.findIndex(r => r.n.id === id);
+    el("dwPrev").disabled = idx <= 0;
+    el("dwPrev").style.opacity = idx <= 0 ? .4 : 1;
+  }
 
-    return c;
+  function stepLesson(dir){
+    if (!state.lesson) return;
+    const all = orderedNodes();
+    const idx = all.findIndex(r => r.n.id === state.lesson);
+    const ni = idx + dir;
+    if (ni < 0 || ni >= all.length) return;
+    state.lesson = all[ni].n.id;
+    paintDrawer(state.lesson);
+    el("dwBody").scrollTop = 0;
+  }
+
+  function completeAndNext(){
+    if (!state.lesson) return;
+    const id = state.lesson;
+    if (!isDone(id)) toggle(id);   // toggle re-renders path + repaints drawer
+    const nx = nextRef();
+    if (nx && nx.n.id !== id){ state.lesson = nx.n.id; paintDrawer(nx.n.id); }
+    else closeLesson();
+    el("dwBody").scrollTop = 0;
   }
 
   // ---------- language selector ----------
@@ -219,8 +322,7 @@
     el("search").placeholder    = t("search");
     el("fAll").textContent      = t("filterAll");
     el("fSkip").textContent     = t("filterSkip");
-    el("expandAll").textContent = t("expand");
-    el("collapseAll").textContent = t("collapse");
+    el("legend").textContent    = t("legend");
     el("resetBtn").textContent  = t("reset");
     el("progLabel").textContent = t("progress");
     el("builtBy").textContent   = t("built");
@@ -234,9 +336,12 @@
     el("howTitle").textContent  = t("howTitle");
     el("howBody").innerHTML     = t("howBody");
     el("themeName").textContent = state.theme === "light" ? t("light") : t("dark");
+    const cb = el("continueBtn"); if (cb) cb.innerHTML = `▶ ${esc(t("continueBtn"))}`;
     const cs = el("ctaStart"); if (cs) cs.textContent = t("ctaStart");
     const cw = el("ctaWhy");   if (cw) cw.textContent = t("ctaWhy");
+    el("dwPrev").textContent = "← " + t("prevLesson");
     updateProgress();
+    refreshNextHint();
   }
 
   // ---------- theme ----------
@@ -258,13 +363,7 @@
     el("fAll").classList.toggle("active", f==="all");
     el("fSkip").classList.toggle("active", f==="skip");
     renderRoadmap();
-  }
-  function expandAll(open){
-    document.querySelectorAll(".node").forEach(c=>{
-      c.classList.toggle("open", open);
-      const b=c.querySelector(".node-body"); if(b) b.hidden=!open;
-      const ch=c.querySelector(".chev"); if(ch) ch.setAttribute("aria-expanded",open);
-    });
+    observeAll();
   }
 
   // ---------- init ----------
@@ -278,15 +377,23 @@
     el("langSelect").addEventListener("change", e => {
       state.lang = e.target.value;
       localStorage.setItem(LS.lang, state.lang);
-      applyStatic(); renderRoadmap();
+      applyStatic(); renderRoadmap(); observeAll();
+      if (state.lesson) paintDrawer(state.lesson);
     });
     el("themeToggle").addEventListener("click", toggleTheme);
     el("fAll").addEventListener("click", ()=>setFilter("all"));
     el("fSkip").addEventListener("click", ()=>setFilter("skip"));
-    el("expandAll").addEventListener("click", ()=>expandAll(true));
-    el("collapseAll").addEventListener("click", ()=>expandAll(false));
     el("resetBtn").addEventListener("click", ()=>{
-      if (confirm(t("confirmReset"))) { state.done={}; save(LS.done,state.done); renderRoadmap(); updateProgress(); }
+      if (confirm(t("confirmReset"))) { state.done={}; save(LS.done,state.done); renderRoadmap(); updateProgress(); refreshNextHint(); }
+    });
+    el("continueBtn").addEventListener("click", ()=>{
+      const nx = nextRef();
+      if (!nx) return;
+      setFilter("all"); state.query = ""; el("search").value = "";
+      renderRoadmap(); observeAll();
+      const nodeEl = document.querySelector(`.pnode[data-node="${nx.n.id}"]`);
+      if (nodeEl) nodeEl.scrollIntoView({behavior:"smooth", block:"center"});
+      setTimeout(()=> openLesson(nx.n.id), 450);
     });
 
     let deb;
@@ -295,22 +402,37 @@
       deb = setTimeout(()=>{ state.query=e.target.value; renderRoadmap(); observeAll(); }, 120);
     });
 
+    // drawer controls
+    el("dwClose").addEventListener("click", closeLesson);
+    el("scrim").addEventListener("click", closeLesson);
+    el("dwPrev").addEventListener("click", ()=>stepLesson(-1));
+    el("dwDone").addEventListener("click", completeAndNext);
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && state.lesson) closeLesson();
+    });
+
     const top = el("toTop");
     window.addEventListener("scroll", ()=> top.classList.toggle("show", window.scrollY > 600));
     top.addEventListener("click", ()=> window.scrollTo({top:0,behavior:"smooth"}));
 
-    setFilter(state.filter);
-    observeAll();
-
-    // card spotlight follows the cursor (the "wow" glow)
+    // card spotlight follows the cursor
     document.addEventListener("pointermove", e => {
-      const card = e.target.closest ? e.target.closest(".node") : null;
+      const card = e.target.closest ? e.target.closest(".pnode-card") : null;
       if (!card) return;
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
       card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
     }, { passive: true });
+
+    setFilter(state.filter);
+    observeAll();
   }
+
+  // reveal-on-scroll
+  const io = new IntersectionObserver(es=>{
+    es.forEach(en=>{ if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { threshold: 0.04 });
+  function observeAll(){ document.querySelectorAll(".phase:not(.in)").forEach(p=>io.observe(p)); }
 
   // ---------- galaxy starfield ----------
   function initStars(){
@@ -349,12 +471,6 @@
     resize();
     requestAnimationFrame(frame);
   }
-
-  // reveal-on-scroll
-  const io = new IntersectionObserver(es=>{
-    es.forEach(en=>{ if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
-  }, { threshold: 0.06 });
-  function observeAll(){ document.querySelectorAll(".phase:not(.in)").forEach(p=>io.observe(p)); }
 
   document.addEventListener("DOMContentLoaded", init);
 })();

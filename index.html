@@ -88,12 +88,12 @@
           </div>
         </div>
         <div class="toolbar-row">
-          <div class="legend" id="legend">Click any card to expand the lesson, tick the box when learned</div>
+          <div class="legend" id="legend">Click a node to open its lesson</div>
           <div class="exp-btns">
-            <button id="expandAll" class="mini">Expand All</button>
-            <button id="collapseAll" class="mini">Collapse All</button>
+            <button id="continueBtn" class="btn btn-primary btn-sm">▶ Continue Learning</button>
           </div>
         </div>
+        <div class="next-hint" id="nextHint"></div>
       </div>
 
       <div class="panel prog-panel">
@@ -179,6 +179,22 @@
   </footer>
 
   <button class="totop" id="toTop" title="Back to top" aria-label="Back to top">↑</button>
+
+  <!-- ============ LESSON DRAWER ============ -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" hidden aria-label="Lesson">
+    <div class="dw-head">
+      <div class="dw-crumb" id="dwCrumb"></div>
+      <h3 class="dw-title" id="dwTitle"></h3>
+      <div class="dw-badges" id="dwBadges"></div>
+      <button class="dw-close" id="dwClose" aria-label="Close lesson">×</button>
+    </div>
+    <div class="dw-body" id="dwBody"></div>
+    <div class="dw-foot">
+      <button class="btn btn-ghost" id="dwPrev">← Previous</button>
+      <button class="btn btn-primary" id="dwDone">Mark complete</button>
+    </div>
+  </aside>
 
   <!-- ============ SCRIPTS ============ -->
   <script src="js/roadmap-data.js"></script>
