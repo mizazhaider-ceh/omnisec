@@ -38,7 +38,7 @@ From absolute beginner to advanced bug bounty hunter, one roadmap, end to end.
 | ⭐ **Don't-Skip Gems** | Flagged topics + a dedicated filter for the things learners quietly skip |
 | ✅ **Progress tracking** | Tick topics off, your progress saves in the browser. Live ring, per-phase counters |
 | 🌍 **70+ languages** | Instant UI switching with full RTL support (Arabic, Urdu, Persian, Hebrew) |
-| 🎨 **Galaxy UI** | Animated starfield, nebula, glassmorphism, dark-first design with a polished light mode |
+| 🎨 **Galaxy UI** | Animated starfield, nebula, glassmorphism, pastel frosted-glass light theme with a galaxy dark mode |
 | 🛡️ **Cyber mascots** | Hand-drawn SVG guardians per phase, zero external images |
 | 📴 **100% offline** | No backend, no build step, no install. Works anywhere |
 | 🔍 **Smart search** | Jump to any topic, tool, tag, or resource instantly |

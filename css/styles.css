@@ -41,20 +41,23 @@
   --mascot-1:#14b8a6;
   --mascot-2:#7c3aed;
 
-  --bg:#eef3fa;
-  --bg-2:#e3ecf7;
-  --surface:rgba(255,255,255,0.72);
+  /* pastel frosted-glass theme */
+  --bg:#f6f3ff;
+  --bg-2:#edf7f3;
+  --surface:rgba(255,255,255,0.60);
   --surface-solid:#ffffff;
-  --surface-2:rgba(241,245,249,0.8);
-  --border:rgba(15,23,42,0.10);
-  --border-glow:rgba(13,148,136,0.35);
-  --text:#0b1526;
-  --muted:#5b6b82;
-  --ring-track:rgba(15,23,42,0.08);
-  --shadow:0 10px 30px -12px rgba(13,38,76,0.25);
-  --shadow-lg:0 24px 60px -20px rgba(13,38,76,0.35);
-  --glow:0 0 0 1px rgba(13,148,136,0.18), 0 0 24px -6px rgba(13,148,136,0.4);
-  --glow-violet:0 0 0 1px rgba(124,58,237,0.18), 0 0 24px -6px rgba(124,58,237,0.4);
+  --surface-2:rgba(255,255,255,0.42);
+  --border:rgba(255,255,255,0.85);
+  --border-soft:rgba(120,130,180,0.18);
+  --border-glow:rgba(13,148,136,0.30);
+  --text:#232a3d;
+  --muted:#6b7690;
+  --ring-track:rgba(35,42,61,0.08);
+  --shadow:0 18px 42px -18px rgba(109,112,196,0.28);
+  --shadow-lg:0 32px 64px -22px rgba(109,112,196,0.32);
+  --glow:0 0 0 1px rgba(13,148,136,0.16), 0 0 26px -6px rgba(13,148,136,0.35);
+  --glow-violet:0 0 0 1px rgba(124,58,237,0.16), 0 0 26px -6px rgba(124,58,237,0.35);
+  --radius:22px;
 }
 
 /* ---------------- Base ---------------- */
@@ -77,7 +80,7 @@ body{
 
 /* starfield canvas + nebula orbs */
 #stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:1}
-[data-theme="light"] #stars{opacity:.28}
+[data-theme="light"] #stars{opacity:0}
 .nebula{position:fixed;border-radius:50%;filter:blur(110px);z-index:0;pointer-events:none;opacity:.5;animation:drift 26s ease-in-out infinite alternate}
 .nebula.n1{width:560px;height:560px;top:-180px;left:-140px;background:radial-gradient(circle,rgba(45,212,191,.35),transparent 70%)}
 .nebula.n2{width:640px;height:640px;top:20%;right:-220px;background:radial-gradient(circle,rgba(167,139,250,.32),transparent 70%);animation-delay:-8s}
@@ -505,20 +508,40 @@ body.rtl #search{padding:13px 40px 13px 14px}
 }
 
 /* =====================================================================
-   QUEST PATH UI — the guided learning journey
+   QUEST PATH UI: the guided learning journey
    ===================================================================== */
 
-/* light-mode aurora polish */
+/* pastel frosted-glass theme: dreamy gradient mesh + frosted surfaces */
 [data-theme="light"] body{
   background:
-    radial-gradient(900px 480px at 85% -5%, rgba(13,148,136,.10), transparent 60%),
-    radial-gradient(800px 420px at -10% 15%, rgba(124,58,237,.10), transparent 55%),
-    radial-gradient(700px 500px at 50% 110%, rgba(219,39,119,.07), transparent 60%),
+    radial-gradient(1050px 620px at 8% -4%, rgba(199,210,254,.60), transparent 62%),
+    radial-gradient(950px 580px at 92% 6%, rgba(167,243,208,.55), transparent 62%),
+    radial-gradient(850px 620px at 50% 108%, rgba(253,230,138,.40), transparent 62%),
+    radial-gradient(720px 520px at 88% 82%, rgba(249,168,212,.38), transparent 62%),
+    radial-gradient(700px 500px at 12% 78%, rgba(196,181,253,.35), transparent 62%),
     linear-gradient(180deg,var(--bg),var(--bg-2));
 }
-[data-theme="light"] .nebula{opacity:.5}
-[data-theme="light"] .panel,[data-theme="light"] .pnode-card,[data-theme="light"] .res-row{
-  box-shadow:0 12px 32px -14px rgba(13,38,76,.22);
+[data-theme="light"] .nebula{opacity:.55}
+[data-theme="light"] .panel,[data-theme="light"] .cat-card,[data-theme="light"] .tcard,
+[data-theme="light"] .d-card,[data-theme="light"] .res-row,[data-theme="light"] .pager-card,
+[data-theme="light"] .phase-hero,[data-theme="light"] .why,[data-theme="light"] .author-card{
+  backdrop-filter:blur(22px) saturate(1.5);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5);
+  border-color:var(--border);
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="light"] .topbar{
+  background:rgba(255,255,255,0.55);
+  border-color:var(--border);
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.7);
+}
+/* floating pill navbar */
+.topbar{
+  top:14px;
+  width:min(var(--maxw), calc(100% - 28px));
+  margin:14px auto 0;
+  border-radius:20px;
+  border:1px solid var(--border);
 }
 
 /* continue strip */
@@ -657,7 +680,7 @@ body.rtl.dw-open .drawer{transform:none}
 }
 
 /* =====================================================================
-   MULTI-PAGE UI — Home (categories) / Phase / Topic detail
+   MULTI-PAGE UI: Home (categories) / Phase / Topic detail
    ===================================================================== */
 .view{animation:viewIn .55s cubic-bezier(.2,.8,.2,1)}
 @keyframes viewIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}

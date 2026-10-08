@@ -17,7 +17,7 @@
   const state = {
     done:   load(LS.done, {}),
     lang:   localStorage.getItem(LS.lang)  || detectLang(),
-    theme:  localStorage.getItem(LS.theme) || "dark",
+    theme:  localStorage.getItem(LS.theme) || "light",
     filter: localStorage.getItem(LS.filter) || "all",
     query:  "",
     view:   "home",
