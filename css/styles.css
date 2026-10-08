@@ -984,3 +984,69 @@ ul.concepts .c-ico{
   border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
   padding:2px 9px;border-radius:99px;margin-left:8px;vertical-align:2px;letter-spacing:.5px
 }
+
+/* =====================================================================
+   STORY CINEMATIC v2 — liquid glass, fire flares, shockwaves
+   ===================================================================== */
+/* liquid glass orbs: specular highlight + inner depth */
+.orb{overflow:visible}
+.orb::before{
+  content:"";position:absolute;top:10%;left:14%;width:42%;height:30%;border-radius:50%;z-index:1;
+  background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(255,255,255,.15) 60%,transparent 72%);
+  filter:blur(3px);animation:specShift 4.5s ease-in-out infinite;pointer-events:none
+}
+@keyframes specShift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(12px,9px) scale(.92)}}
+.orb{filter:saturate(1.25)}
+.story-stage.s3{background:
+    radial-gradient(700px 380px at 50% 110%, rgba(124,58,237,.42), transparent 65%),
+    radial-gradient(560px 340px at 50% 40%, rgba(45,212,191,.22), transparent 62%),
+    linear-gradient(180deg,#0a0e22,#0d1330 60%,#0b0e20);
+  transition:background 1.2s ease}
+
+/* fire flares: two colored flames that appear as the orbs close in */
+.flare{
+  position:absolute;top:50%;width:230px;height:130px;margin-top:-65px;z-index:1;opacity:0;
+  pointer-events:none;filter:blur(16px);mix-blend-mode:screen;border-radius:50%;
+  transition:opacity .5s ease
+}
+.flare-a{left:calc(50% - 300px);background:radial-gradient(closest-side,rgba(196,141,255,.95),rgba(124,58,237,.5) 55%,transparent 72%)}
+.flare-b{right:calc(50% - 300px);background:radial-gradient(closest-side,rgba(153,246,228,.95),rgba(45,212,191,.5) 55%,transparent 72%)}
+.story-stage.s2 .flare{opacity:1;animation:flareFlick .4s ease-in-out infinite alternate}
+.story-stage.s3 .flare{opacity:0;transition:opacity .3s}
+@keyframes flareFlick{
+  0%{transform:scaleX(1) scaleY(1) rotate(-2deg)}
+  100%{transform:scaleX(1.18) scaleY(.86) rotate(2deg)}
+}
+
+/* shockwaves after the merge */
+.shock{
+  position:absolute;left:50%;top:50%;width:220px;height:220px;margin:-110px 0 0 -110px;
+  border-radius:50%;border:3px solid rgba(255,255,255,.85);z-index:3;opacity:0;pointer-events:none;
+  box-shadow:0 0 40px rgba(139,92,246,.5), inset 0 0 30px rgba(45,212,191,.4)
+}
+.story-stage.s3 .shock{animation:shockGo 1.5s .5s cubic-bezier(.2,.7,.3,1) forwards}
+.story-stage.s3 .shock.d2{animation-delay:.72s;border-color:rgba(94,234,212,.8)}
+.story-stage.s3 .shock.d3{animation-delay:.94s;border-color:rgba(196,141,255,.8)}
+@keyframes shockGo{0%{transform:scale(.15);opacity:.95}100%{transform:scale(4.4);opacity:0}}
+
+/* orbiting sparks around the merged core */
+.orbit-p{position:absolute;left:50%;top:50%;width:0;height:0;z-index:2;opacity:0;pointer-events:none;transition:opacity .8s}
+.story-stage.s3 .orbit-p{opacity:1;transition-delay:1s}
+.orbit-p i{position:absolute;width:8px;height:8px;margin:-4px;border-radius:50%}
+.orbit-p.o1{animation:orbit1 5.5s linear infinite}
+.orbit-p.o1 i{background:#5eead4;box-shadow:0 0 14px 5px rgba(94,234,212,.75)}
+.orbit-p.o2{animation:orbit2 7.5s linear infinite}
+.orbit-p.o2 i{background:#c4b5fd;box-shadow:0 0 14px 5px rgba(167,139,250,.75);width:6px;height:6px}
+.orbit-p.o3{animation:orbit3 9.5s linear infinite}
+.orbit-p.o3 i{background:#fff;box-shadow:0 0 12px 4px rgba(255,255,255,.8);width:5px;height:5px}
+@keyframes orbit1{from{transform:rotate(0) translateX(125px)}to{transform:rotate(360deg) translateX(125px)}}
+@keyframes orbit2{from{transform:rotate(120deg) translateX(150px)}to{transform:rotate(480deg) translateX(150px)}}
+@keyframes orbit3{from{transform:rotate(240deg) translateX(105px)}to{transform:rotate(-120deg) translateX(105px)}}
+
+/* staggered story reveal */
+.story-content .rv{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.story-content.show .rv{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .flare,.shock,.orbit-p{display:none}
+}

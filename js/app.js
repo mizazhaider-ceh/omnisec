@@ -151,27 +151,35 @@
       <div class="story-stage" id="storyStage">
         <div class="story-kickerline">${esc(t("storyKicker"))}</div>
         <canvas id="burst"></canvas>
+        <div class="flare flare-a"></div>
+        <div class="flare flare-b"></div>
         <div class="orb orb-a"><span>The PenTrix</span></div>
         <div class="orb orb-b"><span>OmniSec</span></div>
         <div class="flash"></div>
+        <div class="shock"></div>
+        <div class="shock d2"></div>
+        <div class="shock d3"></div>
         <div class="core">✦</div>
+        <div class="orbit-p o1"><i></i></div>
+        <div class="orbit-p o2"><i></i></div>
+        <div class="orbit-p o3"><i></i></div>
         <div class="story-ctrl">
           <button id="replayStory">↻ ${esc(t("replay"))}</button>
           <button id="skipStory">${esc(t("skip"))} →</button>
         </div>
       </div>
       <div class="story-content" id="storyContent" hidden>
-        <div class="phase-kicker" style="text-align:center">${esc(t("storyKicker"))}</div>
-        <h2>${t("storyTitle")}</h2>
-        <p class="lede">${t("storyP1")}</p>
-        <p class="lede">${t("storyP2")}</p>
-        <p class="lede">${t("storyP3")}</p>
-        <div class="pillars">
+        <div class="phase-kicker rv" style="--d:.05s;text-align:center">${esc(t("storyKicker"))}</div>
+        <h2 class="rv" style="--d:.15s">${t("storyTitle")}</h2>
+        <p class="lede rv" style="--d:.3s">${t("storyP1")}</p>
+        <p class="lede rv" style="--d:.45s">${t("storyP2")}</p>
+        <p class="lede rv" style="--d:.6s">${t("storyP3")}</p>
+        <div class="pillars rv" style="--d:.75s">
           <div class="pillar"><span class="p-ico">🎯</span><h3>${esc(t("pillar1t"))}</h3><p>${esc(t("pillar1d"))}</p></div>
           <div class="pillar"><span class="p-ico">🛠️</span><h3>${esc(t("pillar2t"))}</h3><p>${esc(t("pillar2d"))}</p></div>
           <div class="pillar"><span class="p-ico">🌍</span><h3>${esc(t("pillar3t"))}</h3><p>${esc(t("pillar3d"))}</p></div>
         </div>
-        <div class="story-cta">
+        <div class="story-cta rv" style="--d:.9s">
           <a class="btn btn-primary" href="#/">${esc(t("startLearning"))} →</a>
         </div>
       </div>
@@ -213,27 +221,65 @@
     const ctx = cv.getContext("2d");
     if (!ctx) return;
     const cx = w/2, cy = h/2;
-    const cols = ["45,212,191","167,139,250","244,114,182","255,255,255","56,189,248"];
-    const ps = Array.from({length:170}, ()=>({
-      a: Math.random()*Math.PI*2, sp: 2+Math.random()*7.5,
-      r: 1.5+Math.random()*3.5, life: 1, decay: .008+Math.random()*.014,
-      c: cols[(Math.random()*cols.length)|0], x: cx, y: cy
-    }));
+    const VIOLET = ["167,139,250","139,92,246","196,141,255"];
+    const TEAL = ["45,212,191","94,234,212","153,246,228"];
+    const ps = [];
+    const start = performance.now();
+    const SWIRL_MS = 950;
+
+    function spawnSwirl(side){
+      // side -1: violet from left, +1: teal from right
+      const cols = side < 0 ? VIOLET : TEAL;
+      const ex = cx + side * (w*0.32), ey = cy + (Math.random()-.5)*60;
+      const ang = Math.atan2(cy-ey, cx-ex);
+      ps.push({
+        x: ex, y: ey,
+        vx: Math.cos(ang)*(2.5+Math.random()*2) , vy: Math.sin(ang)*(2.5+Math.random()*2) - 1.2,
+        swirl: side * (1.5+Math.random()*2),
+        r: 2+Math.random()*4, life: 1, decay: .006+Math.random()*.008,
+        c: cols[(Math.random()*cols.length)|0], flick: Math.random()*6.28
+      });
+    }
+    function explode(){
+      const all = VIOLET.concat(TEAL, ["255,255,255","255,255,255"]);
+      for (let i=0;i<200;i++){
+        const a = Math.random()*Math.PI*2, sp = 2+Math.random()*9;
+        ps.push({
+          x: cx, y: cy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+          swirl: 0, r: 1.5+Math.random()*4, life: 1, decay: .007+Math.random()*.013,
+          c: all[(Math.random()*all.length)|0], flick: Math.random()*6.28
+        });
+      }
+    }
+
     ctx.globalCompositeOperation = "lighter";
+    let exploded = false, t = 0;
     (function frame(){
+      t = performance.now() - start;
       ctx.clearRect(0,0,w,h);
+      if (t < SWIRL_MS){
+        for (let i=0;i<7;i++){ spawnSwirl(-1); spawnSwirl(1); }
+      } else if (!exploded){ exploded = true; explode(); }
       let alive = false;
       for (const p of ps){
         if (p.life <= 0) continue;
         alive = true;
-        p.x += Math.cos(p.a)*p.sp; p.y += Math.sin(p.a)*p.sp;
-        p.sp *= .985; p.life -= p.decay;
+        // swirl curl + upward flame drift
+        const px = -p.vy, py = p.vx;
+        p.vx += px * .02 * p.swirl; p.vy += py * .02 * p.swirl;
+        p.vy -= .015;
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= .99; p.vy *= .99;
+        p.life -= p.decay; p.flick += .3;
+        const fr = p.r * p.life * (0.75 + 0.25*Math.sin(p.flick));
+        if (fr <= 0) continue;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(p.r*p.life,.1), 0, 7);
+        ctx.arc(p.x, p.y, fr, 0, 7);
         ctx.fillStyle = "rgba(" + p.c + "," + Math.max(p.life,0).toFixed(3) + ")";
         ctx.fill();
       }
-      if (alive) requestAnimationFrame(frame); else ctx.clearRect(0,0,w,h);
+      if (alive || t < SWIRL_MS + 100) requestAnimationFrame(frame);
+      else ctx.clearRect(0,0,w,h);
     })();
   }
 
