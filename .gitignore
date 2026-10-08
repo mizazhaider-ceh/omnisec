@@ -1,0 +1,7 @@
+# OmniSec is a static site: nothing to build, nothing to ignore at runtime.
+# Kept minimal so clones stay clean.
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+dist/
