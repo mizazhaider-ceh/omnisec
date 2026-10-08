@@ -35,7 +35,7 @@ const ROADMAP = [
           "Bookmark a Rules of Engagement template you'll reuse for every engagement"],
         tools:[],
         res:[{t:"HackerOne Disclosure Guidelines",u:"https://www.hackerone.com/disclosure-guidelines"},
-             {t:"EFF: Coders' Rights",u:"https://www.eff.org/issues/coders"}] },
+             {t:"EFF: Coders' Rights",u:"https://www.eff.org/issues/coders"},{t:"HackerOne Hacktivity (real disclosures)",u:"https://hackerone.com/hacktivity"}] },
 
       { id:"n_method", t:"The Pentest Methodology", d:"The repeatable loop every engagement follows.", lv:1, time:"~3h", skip:false,
         learn:[
@@ -49,7 +49,7 @@ const ROADMAP = [
           "Create a reusable engagement checklist (a simple markdown file)"],
         tools:["MITRE ATT&CK","PTES"],
         res:[{t:"MITRE ATT&CK Matrix",u:"https://attack.mitre.org/"},
-             {t:"PTES Standard",u:"http://www.pentest-standard.org/"}] },
+             {t:"PTES Standard",u:"http://www.pentest-standard.org/"},{t:"OWASP Web Security Testing Guide",u:"https://owasp.org/www-project-web-security-testing-guide/"}] },
 
       { id:"n_notes", t:"Note-Taking & Documentation", d:"The #1 skill nobody teaches.", lv:1, time:"~2h", skip:true,
         tip:"Beginners 'remember it later', then lose a found vulnerability because they never wrote the request down. If it isn't written, it didn't happen.",
@@ -64,7 +64,7 @@ const ROADMAP = [
           "Take 3 screenshots and embed them in a markdown note with captions"],
         tools:["Obsidian","CherryTree","Markdown"],
         res:[{t:"Obsidian (free)",u:"https://obsidian.md/"},
-             {t:"Markdown Guide",u:"https://www.markdownguide.org/basic-syntax/"}] },
+             {t:"Markdown Guide",u:"https://www.markdownguide.org/basic-syntax/"},{t:"Joplin (free, offline notes)",u:"https://joplinapp.org/"}] },
 
       { id:"n_growth", t:"Learning How to Learn & Googling", d:"Turn 'stuck' into 'solved' fast.", lv:1, time:"~1h", skip:true,
         tip:"Most 'I'm stuck' moments are really 'I asked the wrong question.' Read the error message, it usually tells you the fix.",
@@ -79,7 +79,7 @@ const ROADMAP = [
           "Bookmark HackTricks and explainshell.com"],
         tools:["man","tldr","explainshell"],
         res:[{t:"explainshell.com",u:"https://explainshell.com/"},
-             {t:"HackTricks",u:"https://book.hacktricks.xyz/"}] }
+             {t:"HackTricks",u:"https://book.hacktricks.xyz/"},{t:"Google Hacking Database",u:"https://www.exploit-db.com/google-hacking-database"}] }
     ]},
     { id:"s0b", title:"Build Your Practice Lab (Hands-On)", nodes:[
       { id:"n_vm", t:"Virtualization & Snapshots", d:"Run safe, disposable machines.", lv:1, time:"~2h", skip:false,
@@ -93,7 +93,7 @@ const ROADMAP = [
           "Break something on purpose, then restore the snapshot to confirm it works"],
         tools:["VirtualBox","VMware"],
         res:[{t:"VirtualBox Downloads",u:"https://www.virtualbox.org/wiki/Downloads"},
-             {t:"VirtualBox Manual: Snapshots",u:"https://www.virtualbox.org/manual/ch01.html#snapshots"}] },
+             {t:"VirtualBox Manual: Snapshots",u:"https://www.virtualbox.org/manual/ch01.html#snapshots"},{t:"Proxmox VE (free hypervisor)",u:"https://www.proxmox.com/en/proxmox-ve"}] },
 
       { id:"n_kali", t:"Set Up Your Attacker VM", d:"Your hacking workstation.", lv:1, time:"~2h", skip:false,
         learn:[
@@ -106,7 +106,7 @@ const ROADMAP = [
           "Verify tools exist: run `nmap --version` and `msfconsole -v`"],
         tools:["Kali Linux","Parrot OS"],
         res:[{t:"Kali Pre-built VMs",u:"https://www.kali.org/get-kali/#kali-virtual-machines"},
-             {t:"Parrot Security",u:"https://www.parrotsec.org/download/"}] },
+             {t:"Parrot Security",u:"https://www.parrotsec.org/download/"},{t:"Kali Linux Docs",u:"https://www.kali.org/docs/"}] },
 
       { id:"n_victim", t:"Deploy Legal Targets to Attack", d:"Practice without breaking the law.", lv:1, time:"~3h", skip:false,
         learn:[
@@ -120,7 +120,7 @@ const ROADMAP = [
         tools:["TryHackMe","DVWA","OWASP Juice Shop","VulnHub","HackTheBox"],
         res:[{t:"TryHackMe",u:"https://tryhackme.com/"},
              {t:"OWASP Juice Shop",u:"https://owasp.org/www-project-juice-shop/"},
-             {t:"VulnHub",u:"https://www.vulnhub.com/"}] },
+             {t:"VulnHub",u:"https://www.vulnhub.com/"},{t:"Metasploitable 3",u:"https://github.com/rapid7/metasploitable3"}] },
 
       { id:"n_snapshot", t:"Network Isolation & Safety", d:"Keep malware off your real machine.", lv:1, time:"~1h", skip:true,
         tip:"Students leave the lab on 'Bridged' networking, then a malware sample or a vulnerable box touches their home network. Use Host-Only/Internal.",
@@ -170,7 +170,7 @@ const ROADMAP = [
           "Practice 10 subnetting questions on subnettingpractice.com"],
         tools:["ipcalc"],
         res:[{t:"Subnetting Practice",u:"https://subnettingpractice.com/"},
-             {t:"Professor Messer: Subnetting",u:"https://www.professormesser.com/network-plus/n10-008/n10-008-video/ipv4-subnetting-n10-008/"}] },
+             {t:"Professor Messer: Subnetting",u:"https://www.professormesser.com/network-plus/n10-008/n10-008-video/ipv4-subnetting-n10-008/"},{t:"CIDR.xyz (visual subnetting)",u:"https://cidr.xyz/"}] },
 
       { id:"n_ports", t:"Ports, Protocols & Services", d:"The doors into a machine.", lv:1, time:"~3h", skip:false,
         learn:[
@@ -182,7 +182,7 @@ const ROADMAP = [
           "On your Kali box run `cat /etc/services` and explore it",
           "Connect to a service manually with `nc <ip> 80` and type `GET / HTTP/1.0`"],
         tools:["netcat"],
-        res:[{t:"IANA Port Numbers",u:"https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"}] },
+        res:[{t:"IANA Port Numbers",u:"https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"},{t:"SpeedGuide Ports Database",u:"https://www.speedguide.net/ports.php"}] },
 
       { id:"n_packets", t:"Packet Analysis (Wireshark)", d:"See the traffic with your own eyes.", lv:2, time:"~3h", skip:false,
         learn:[
@@ -223,7 +223,7 @@ const ROADMAP = [
           "Chain commands: `cat /etc/passwd | grep bash | wc -l`"],
         tools:["bash","find","grep"],
         res:[{t:"OverTheWire: Bandit",u:"https://overthewire.org/wargames/bandit/"},
-             {t:"Linux Journey",u:"https://linuxjourney.com/"}] },
+             {t:"Linux Journey",u:"https://linuxjourney.com/"},{t:"LinuxCommand.org",u:"https://linuxcommand.org/"}] },
 
       { id:"n_perms", t:"Permissions, Users & sudo", d:"The root of most privilege escalation.", lv:1, time:"~3h", skip:false,
         learn:[
@@ -263,7 +263,7 @@ const ROADMAP = [
           "Make a script executable (chmod +x) and run it with ./"],
         tools:["bash"],
         res:[{t:"Bash scripting cheatsheet",u:"https://devhints.io/bash"},
-             {t:"ShellCheck (lint your scripts)",u:"https://www.shellcheck.net/"}] },
+             {t:"ShellCheck (lint your scripts)",u:"https://www.shellcheck.net/"},{t:"Bash Hackers Wiki",u:"https://wiki.bash-hackers.org/"}] },
 
       { id:"n_proc", t:"Processes, Services & systemd", d:"Know what's running and why.", lv:2, time:"~2h", skip:false,
         learn:[
@@ -275,7 +275,7 @@ const ROADMAP = [
           "Inspect a service: `systemctl status ssh`",
           "Kill a process you started by PID"],
         tools:["ps","htop","systemctl","ss"],
-        res:[{t:"systemd basics",u:"https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal"}] }
+        res:[{t:"systemd basics",u:"https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal"},{t:"systemd Documentation",u:"https://www.freedesktop.org/wiki/Software/systemd/"}] }
     ]},
     { id:"s1c", title:"Windows & A Scripting Language", nodes:[
       { id:"n_win", t:"Windows Internals Basics", d:"Most enterprises run Windows, so will your targets.", lv:2, time:"~4h", skip:false,
@@ -288,7 +288,7 @@ const ROADMAP = [
           "List local users with `net user` in cmd",
           "Find scheduled tasks with `schtasks` "],
         tools:["cmd","regedit"],
-        res:[{t:"Microsoft: Windows components",u:"https://learn.microsoft.com/en-us/windows/win32/"}] },
+        res:[{t:"Microsoft: Windows components",u:"https://learn.microsoft.com/en-us/windows/win32/"},{t:"LOLBAS (living-off-the-land)",u:"https://lolbas-project.github.io/"}] },
 
       { id:"n_ps", t:"PowerShell Fundamentals", d:"The attacker's power tool on Windows.", lv:2, time:"~3h", skip:true,
         tip:"Linux-only learners skip PowerShell, then freeze on their first Windows/AD box. Learn the verbs-nouns model early.",
@@ -314,7 +314,7 @@ const ROADMAP = [
           "Refactor one of your bash one-liners into a Python tool with argparse"],
         tools:["Python","requests"],
         res:[{t:"Automate the Boring Stuff (free)",u:"https://automatetheboringstuff.com/"},
-             {t:"TryHackMe: Python Basics",u:"https://tryhackme.com/room/pythonbasics"}] },
+             {t:"TryHackMe: Python Basics",u:"https://tryhackme.com/room/pythonbasics"},{t:"Official Python Tutorial",u:"https://docs.python.org/3/tutorial/"}] },
 
       { id:"n_web101", t:"How the Web Works", d:"The foundation of all web hacking.", lv:1, time:"~3h", skip:false,
         learn:[
@@ -327,7 +327,7 @@ const ROADMAP = [
           "Identify a Set-Cookie header and the session cookie it sets"],
         tools:["curl","DevTools"],
         res:[{t:"MDN: HTTP overview",u:"https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview"},
-             {t:"HTTP status codes",u:"https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"}] },
+             {t:"HTTP status codes",u:"https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"},{t:"web.dev Learn",u:"https://web.dev/learn"}] },
 
       { id:"n_git", t:"Git & Version Control", d:"Read code, grab tools, contribute back.", lv:1, time:"~2h", skip:true,
         tip:"Skipped until you urgently need to clone a tool or read a leaked repo. Learn it calmly now.",
@@ -340,7 +340,7 @@ const ROADMAP = [
           "Make your own repo, commit notes, and push to GitHub",
           "Explore a repo's commit log with `git log --oneline`"],
         tools:["git"],
-        res:[{t:"Git tutorial",u:"https://learngitbranching.js.org/"}] }
+        res:[{t:"Git tutorial",u:"https://learngitbranching.js.org/"},{t:"Pro Git Book (free)",u:"https://git-scm.com/book/en/v2"}] }
     ]}
   ]
 },
@@ -362,7 +362,7 @@ const ROADMAP = [
           "Build 5 Google dorks targeting exposed files on a practice domain"],
         tools:["theHarvester","Google Dorks","crt.sh","Maltego"],
         res:[{t:"crt.sh",u:"https://crt.sh/"},
-             {t:"Google Hacking Database",u:"https://www.exploit-db.com/google-hacking-database"}] },
+             {t:"Google Hacking Database",u:"https://www.exploit-db.com/google-hacking-database"},{t:"OSINT Framework",u:"https://osintframework.com/"}] },
 
       { id:"n_subs", t:"Subdomain Enumeration", d:"Find the real, full attack surface.", lv:2, time:"~3h", skip:true,
         tip:"Most beginners test the main domain and stop. The bugs live on forgotten subdomains (dev, staging, old apps). Go wide.",
@@ -376,7 +376,7 @@ const ROADMAP = [
           "Screenshot all live subdomains to triage interesting ones"],
         tools:["subfinder","amass","assetfinder","httpx"],
         res:[{t:"Subfinder",u:"https://github.com/projectdiscovery/subfinder"},
-             {t:"OWASP Amass",u:"https://github.com/owasp-amass/amass"}] },
+             {t:"OWASP Amass",u:"https://github.com/owasp-amass/amass"},{t:"Sublist3r",u:"https://github.com/aboul3la/Sublist3r"}] },
 
       { id:"n_metadata", t:"Metadata & Document Analysis", d:"Public files leak secrets.", lv:2, time:"~1h", skip:true,
         tip:"A company PDF can leak usernames, internal paths and software versions in its metadata. Free intel everyone ignores.",
@@ -427,7 +427,7 @@ const ROADMAP = [
           "Pick one finding and reproduce it manually to confirm it's real",
           "Note false positives you found to build judgment"],
         tools:["nuclei","Nessus","OpenVAS"],
-        res:[{t:"Nuclei",u:"https://github.com/projectdiscovery/nuclei"}] },
+        res:[{t:"Nuclei",u:"https://github.com/projectdiscovery/nuclei"},{t:"Nessus Essentials (free)",u:"https://www.tenable.com/products/nessus/nessus-essentials"}] },
 
       { id:"n_banner", t:"Banner Grabbing & Version Mapping", d:"A tiny detail with huge payoff.", lv:1, time:"~1h", skip:true,
         tip:"An exact version string (e.g. 'vsftpd 2.3.4') often maps directly to a public exploit. Beginners read 'open' and move on; pros read the version.",
@@ -440,7 +440,7 @@ const ROADMAP = [
           "Search the version: `searchsploit vsftpd 2.3.4`",
           "Record version+CVE pairs in your notes"],
         tools:["netcat","curl","whatweb","searchsploit"],
-        res:[{t:"Exploit-DB",u:"https://www.exploit-db.com/"}] }
+        res:[{t:"Exploit-DB",u:"https://www.exploit-db.com/"},{t:"Shodan",u:"https://www.shodan.io/"}] }
     ]}
   ]
 },
@@ -474,7 +474,7 @@ const ROADMAP = [
           "Log every solved lab in your notes with the key insight"],
         tools:["PortSwigger Academy","DVWA"],
         res:[{t:"PortSwigger Web Security Academy (free)",u:"https://portswigger.net/web-security"},
-             {t:"PayloadsAllTheThings",u:"https://github.com/swisskyrepo/PayloadsAllTheThings"}] },
+             {t:"PayloadsAllTheThings",u:"https://github.com/swisskyrepo/PayloadsAllTheThings"},{t:"OWASP Juice Shop",u:"https://owasp.org/www-project-juice-shop/"}] },
 
       { id:"n_dirb", t:"Content Discovery (Fuzzing)", d:"Find hidden endpoints & files.", lv:2, time:"~2h", skip:true,
         tip:"The admin panel, backup.zip, or /api/v1 you never see in the UI is found by fuzzing. Skipping this = missing half the attack surface.",
@@ -501,7 +501,7 @@ const ROADMAP = [
           "Then automate one with `sqlmap -u '...' --batch --dump`",
           "Document the exact payload and why it worked"],
         tools:["sqlmap","Burp Suite"],
-        res:[{t:"PortSwigger: SQL injection",u:"https://portswigger.net/web-security/sql-injection"}] },
+        res:[{t:"PortSwigger: SQL injection",u:"https://portswigger.net/web-security/sql-injection"},{t:"PayloadsAllTheThings",u:"https://github.com/swisskyrepo/PayloadsAllTheThings"}] },
 
       { id:"n_xss", t:"Cross-Site Scripting (XSS)", d:"Run your JavaScript in a victim's browser.", lv:2, time:"~4h", skip:false,
         learn:[
@@ -513,7 +513,7 @@ const ROADMAP = [
           "Craft a payload that calls `document.cookie`",
           "Try a context you struggled with until the payload fires"],
         tools:["Burp Suite"],
-        res:[{t:"PortSwigger: XSS",u:"https://portswigger.net/web-security/cross-site-scripting"}] },
+        res:[{t:"PortSwigger: XSS",u:"https://portswigger.net/web-security/cross-site-scripting"},{t:"OWASP XSS Prevention Cheat Sheet",u:"https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"}] },
 
       { id:"n_idor", t:"Broken Access Control / IDOR", d:"Change an ID, read someone else's data.", lv:1, time:"~3h", skip:true,
         tip:"IDOR is the easiest high-impact bug-bounty win and beginners overlook it. Always test: can I access object 1235 instead of my 1234?",
@@ -565,7 +565,7 @@ const ROADMAP = [
           "Test default creds (admin:admin) on a practice admin panel",
           "Trigger an error and read what the stack trace reveals"],
         tools:["git-dumper","nuclei"],
-        res:[{t:"OWASP Top 10",u:"https://owasp.org/www-project-top-ten/"}] }
+        res:[{t:"OWASP Top 10",u:"https://owasp.org/www-project-top-ten/"},{t:"OWASP Top 10: Misconfiguration",u:"https://owasp.org/Top10/A05_2021-Security_Misconfiguration/"}] }
     ]}
   ]
 },
@@ -586,7 +586,7 @@ const ROADMAP = [
           "Set LHOST/LPORT correctly and catch a meterpreter session",
           "Read the module source to understand the vulnerability it uses"],
         tools:["Metasploit","msfvenom"],
-        res:[{t:"Metasploit Unleashed (free)",u:"https://www.offsec.com/metasploit-unleashed/"}] },
+        res:[{t:"Metasploit Unleashed (free)",u:"https://www.offsec.com/metasploit-unleashed/"},{t:"Metasploit Docs",u:"https://docs.metasploit.com/"}] },
 
       { id:"n_shells", t:"Shells, Payloads & TTY Upgrade", d:"Get a shell, then make it usable.", lv:2, time:"~3h", skip:true,
         tip:"Everyone forgets to stabilize the shell, then loses it the moment they hit Ctrl-C. Learn the TTY upgrade trick once and never struggle again.",
@@ -613,7 +613,7 @@ const ROADMAP = [
           "Brute one login carefully with Hydra in a lab"],
         tools:["hashcat","John the Ripper","Hydra","hashid"],
         res:[{t:"Hashcat wiki",u:"https://hashcat.net/wiki/"},
-             {t:"CrackStation wordlists",u:"https://crackstation.net/"}] }
+             {t:"CrackStation wordlists",u:"https://crackstation.net/"},{t:"Hashcat Example Hashes",u:"https://hashcat.net/wiki/doku.php?id=example_hashes"}] }
     ]},
     { id:"s4b", title:"After the Breach", nodes:[
       { id:"n_privesc", t:"Privilege Escalation (Linux & Windows)", d:"From user to root/SYSTEM.", lv:3, time:"~8h", skip:false,
@@ -639,7 +639,7 @@ const ROADMAP = [
           "SSH dynamic port-forward (-D) to reach an internal service",
           "Reach a second box that was invisible before the pivot"],
         tools:["chisel","proxychains","ssh","sshuttle"],
-        res:[{t:"HackTricks: Tunneling & Pivoting",u:"https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding"}] },
+        res:[{t:"HackTricks: Tunneling & Pivoting",u:"https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding"},{t:"Chisel (fast tunnels)",u:"https://github.com/jpillora/chisel"}] },
 
       { id:"n_persist", t:"Persistence, Cleanup & Loot", d:"Stay in, then prove it and clean up.", lv:3, time:"~2h", skip:true,
         tip:"A professional documents every change and removes it afterward. Persistence isn't 'cool', untracked changes left on a client's box are how you lose trust (and contracts).",
@@ -687,7 +687,7 @@ const ROADMAP = [
           "Find and read an exposed S3 bucket in a lab/CTF"],
         tools:["ScoutSuite","Pacu","awscli"],
         res:[{t:"flaws.cloud (free)",u:"http://flaws.cloud/"},
-             {t:"flaws2.cloud",u:"http://flaws2.cloud/"}] }
+             {t:"flaws2.cloud",u:"http://flaws2.cloud/"},{t:"HackTricks Cloud",u:"https://cloud.hacktricks.xyz/"}] }
     ]},
     { id:"s5b", title:"Modern Attack Surfaces", nodes:[
       { id:"n_api", t:"API Security", d:"The fastest-growing attack surface.", lv:2, time:"~5h", skip:false,
@@ -728,7 +728,7 @@ const ROADMAP = [
           "Review a public CI config for an injectable step"],
         tools:["trufflehog","trivy","gitleaks"],
         res:[{t:"trufflehog",u:"https://github.com/trufflesecurity/trufflehog"},
-             {t:"Trivy",u:"https://github.com/aquasecurity/trivy"}] }
+             {t:"Trivy",u:"https://github.com/aquasecurity/trivy"},{t:"OWASP DevSecOps Guideline",u:"https://owasp.org/www-project-devsecops-guideline/"}] }
     ]}
   ]
 },
@@ -764,7 +764,7 @@ const ROADMAP = [
           "Get feedback or compare against a public disclosed report"],
         tools:["CVSS Calculator"],
         res:[{t:"CVSS Calculator",u:"https://www.first.org/cvss/calculator/3.1"},
-             {t:"How to write a good report",u:"https://docs.hackerone.com/en/articles/8470531-quality-reports"}] },
+             {t:"How to write a good report",u:"https://docs.hackerone.com/en/articles/8470531-quality-reports"},{t:"OWASP Disclosure Cheat Sheet",u:"https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"}] },
 
       { id:"n_certs", t:"Certifications & Portfolio", d:"Prove your skills to employers.", lv:2, time:"~varies", skip:false,
         learn:[
@@ -777,7 +777,7 @@ const ROADMAP = [
           "Pick a first cert target and plan the study path"],
         tools:["OSCP","PNPT","eJPT","CPTS"],
         res:[{t:"TCM Security (PNPT/PEH)",u:"https://academy.tcm-sec.com/"},
-             {t:"OffSec OSCP",u:"https://www.offsec.com/courses/pen-200/"}] },
+             {t:"OffSec OSCP",u:"https://www.offsec.com/courses/pen-200/"},{t:"CompTIA Security+",u:"https://www.comptia.org/certifications/security"}] },
 
       { id:"n_community", t:"Community & Never Stop Learning", d:"The field changes every week.", lv:1, time:"~ongoing", skip:true,
         tip:"The hackers who stay relevant follow researchers, read new disclosures, and keep practicing. Stagnation is the real vulnerability.",
@@ -791,7 +791,7 @@ const ROADMAP = [
           "Contribute one fix/translation to an open-source security project"],
         tools:[],
         res:[{t:"tl;dr sec newsletter",u:"https://tldrsec.com/"},
-             {t:"Awesome Hacking",u:"https://github.com/Hack-with-Github/Awesome-Hacking"}] }
+             {t:"Awesome Hacking",u:"https://github.com/Hack-with-Github/Awesome-Hacking"},{t:"r/netsec",u:"https://www.reddit.com/r/netsec/"}] }
     ]}
   ]
 }

@@ -125,6 +125,8 @@
     const parts = h.replace(/^#\/?/, "").split("/");
     window.scrollTo({ top: 0 });
     if (parts[0] === "story") return viewStory();
+    if (parts[0] === "resources") return viewResources();
+    if (["tools","labs","cheatsheets","glossary","career","faq"].includes(parts[0])) return viewProPage(parts[0]);
     if (parts[0] === "phase" && parts[1]){
       const p = ROADMAP.find(x => x.id === parts[1]);
       if (p) return viewPhase(p);
@@ -344,6 +346,7 @@
               <div class="pct" id="progPct">${pct}%</div>
               <div class="bar"><i id="barFill" style="width:${pct}%"></i></div>
               <div id="progText">${done} ${esc(t("of"))} ${total} ${esc(t("done"))}</div>
+              <div class="streak-line">🔥 <b id="streakN">${state.streak ? state.streak.count : 0}</b> ${esc(t("streak"))}</div>
               <button class="reset" id="resetBtn">${esc(t("reset"))}</button>
             </div>
           </div>
@@ -375,6 +378,20 @@
               </a>`;
             }).join("")}
           </div>
+
+          <section class="levelup">
+            <div class="sec-head">
+              <div>
+                <div class="phase-kicker">⚡ ${esc(t("levelUpKicker"))}</div>
+                <h2>${esc(t("levelUp"))}</h2>
+                <p>${esc(t("levelUpSub"))}</p>
+              </div>
+              <a class="btn btn-ghost" href="#/resources">${esc(t("resources"))} →</a>
+            </div>
+            <div class="res-grid">
+              ${RES_CARDS.map(resCard).join("")}
+            </div>
+          </section>
 
           <section class="why" id="why">
             <div class="kicker">// ${esc(t("authorNote"))}</div>
@@ -541,6 +558,10 @@
         <aside class="detail-side">
           ${tools ? `<section class="d-card"><h5>🧰 ${esc(t("tools"))}</h5><div class="tools">${tools}</div></section>` : ""}
           ${res ? `<section class="d-card"><h5>📚 ${esc(t("resHdr"))}</h5><div class="res-wrap">${res}</div></section>` : ""}
+          <section class="d-card"><h5>📝 ${esc(t("myNotes"))}</h5>
+            <textarea id="topicNotes" class="notes" rows="4" placeholder="${esc(t("notesPh"))}"></textarea>
+            <div class="notes-hint">${esc(t("notesHint"))}</div>
+          </section>
           <section class="d-card meta-card">
             <div class="meta-row"><span>${esc(t("phase"))}</span><b>${esc(p.phase)}</b></div>
             <div class="meta-row"><span>${esc(t("stage"))}</span><b>${esc(s.title)}</b></div>
@@ -550,6 +571,7 @@
       </div>
       <div class="detail-actions">
         <button id="topicDone" class="btn btn-primary"></button>
+        <button id="bookmarkBtn" class="btn btn-ghost"></button>
         ${next ? `<a class="btn btn-ghost" href="#/topic/${next.n.id}">${esc(t("nextLesson"))} →</a>` : ""}
       </div>
       <nav class="pager">
@@ -560,6 +582,21 @@
 
     paintTopicDone(n.id);
     el("topicDone").addEventListener("click", ()=> toggle(n.id));
+    paintBookmark(n.id);
+    el("bookmarkBtn").addEventListener("click", ()=>{ toggleMark(n.id); paintBookmark(n.id); });
+    const ta = el("topicNotes");
+    if (ta){
+      ta.value = getNotes()[n.id] || "";
+      let deb = null;
+      ta.addEventListener("input", ()=>{ clearTimeout(deb); deb = setTimeout(()=> saveNote(n.id, ta.value), 400); });
+    }
+  }
+  function paintBookmark(id){
+    const bb = el("bookmarkBtn");
+    if (!bb) return;
+    const on = getMarks().includes(id);
+    bb.innerHTML = (on ? "★ " : "☆ ") + esc(t(on ? "bookmarked" : "bookmark"));
+    bb.classList.toggle("on", on);
   }
   function paintTopicDone(id){
     const btn = el("topicDone");
@@ -586,6 +623,7 @@
     el("role").textContent       = t("role");
     el("contact").textContent    = t("contact");
     const sl = el("storyLink"); if (sl) sl.textContent = "✨ " + t("story");
+    const rl = el("resLink"); if (rl) rl.textContent = "◈ " + t("resources");
     buildLangSelect();
   }
   function buildLangSelect(){
@@ -610,6 +648,7 @@
     initStars();
     applyTheme();
     applyStatic();
+    state.streak = touchStreak();
     el("langSelect").addEventListener("change", e => {
       state.lang = e.target.value;
       localStorage.setItem(LS.lang, state.lang);
@@ -664,6 +703,183 @@
     window.addEventListener("resize", resize);
     resize();
     requestAnimationFrame(frame);
+  }
+
+  // ================= PRODUCTIVITY: streak, bookmarks, notes =================
+  const LSX = { streak:"omnisec.streak.v1", notes:"omnisec.notes.v1", marks:"omnisec.marks.v1" };
+  function getStreak(){ try{ return JSON.parse(localStorage.getItem(LSX.streak)) || {count:0,last:""}; }catch(e){ return {count:0,last:""}; } }
+  function touchStreak(){
+    const s = getStreak();
+    const day = d => d.toISOString().slice(0,10);
+    const today = day(new Date());
+    if (s.last === today) return s;
+    const yest = day(new Date(Date.now()-864e5));
+    s.count = (s.last === yest) ? s.count+1 : 1;
+    s.last = today;
+    try{ localStorage.setItem(LSX.streak, JSON.stringify(s)); }catch(e){}
+    return s;
+  }
+  function getMarks(){ try{ return JSON.parse(localStorage.getItem(LSX.marks)) || []; }catch(e){ return []; } }
+  function toggleMark(id){
+    let m = getMarks();
+    m = m.includes(id) ? m.filter(x=>x!==id) : m.concat([id]);
+    try{ localStorage.setItem(LSX.marks, JSON.stringify(m)); }catch(e){}
+    return m;
+  }
+  function getNotes(){ try{ return JSON.parse(localStorage.getItem(LSX.notes)) || {}; }catch(e){ return {}; } }
+  function saveNote(id, text){
+    const n = getNotes();
+    if (text.trim()) n[id] = text; else delete n[id];
+    try{ localStorage.setItem(LSX.notes, JSON.stringify(n)); }catch(e){}
+  }
+  function findNode(id){
+    for (const p of ROADMAP) for (const s of p.stages) for (const n of s.nodes)
+      if (n.id === id) return {node:n, phase:p};
+    return null;
+  }
+  function resCard(c){
+    return `
+      <a class="cat-card res-card" href="#/${c.id}">
+        <div class="cat-top"><span class="cat-mascot">${c.icon}</span></div>
+        <h3>${esc(c.t)}</h3>
+        <p>${esc(c.d)}</p>
+        <span class="cat-cta">${esc(t("open"))} →</span>
+      </a>`;
+  }
+
+  // ================= RESOURCES HUB =================
+  function viewResources(){
+    state.view = "resources"; state.viewId = null;
+    setDocTitle(t("resources"));
+    const marks = getMarks();
+    const markRows = marks.map(id => {
+      const f = findNode(id);
+      return f ? `<a class="mark-row" href="#/topic/${f.node.id}"><span class="mark-star">★</span><span class="mark-t">${esc(f.node.t)}</span><span class="mark-p">${esc(f.phase.phase.split(":")[0])}</span></a>` : "";
+    }).join("");
+    el("app").innerHTML = `
+    <div class="view"><main class="wrap">
+      <nav class="crumb"><a href="#/">${esc(t("home"))}</a><span>/</span><span>${esc(t("resources"))}</span></nav>
+      <header class="page-hero">
+        <span class="eyebrow">◈ ${esc(t("resources"))}</span>
+        <h2>${esc(t("resourcesTitle"))}</h2>
+        <p>${esc(t("resourcesSub"))}</p>
+      </header>
+      <div class="res-grid">${RES_CARDS.map(resCard).join("")}</div>
+      <section class="d-card marks-sec">
+        <h5>★ ${esc(t("yourBookmarks"))} <span class="sec-count">${marks.length}</span></h5>
+        ${marks.length ? `<div class="mark-list">${markRows}</div>` : `<p class="empty-note">${esc(t("noBookmarks"))}</p>`}
+      </section>
+    </main></div>`;
+  }
+
+  // ================= PRO PAGES =================
+  const PRO_TITLES = {tools:"pgTools", labs:"pgLabs", cheatsheets:"pgCheats", glossary:"pgGlossary", career:"pgCareer", faq:"pgFaq"};
+  function viewProPage(which){
+    state.view = which; state.viewId = null;
+    setDocTitle(t(PRO_TITLES[which] || "resources"));
+    const bodies = {tools:proTools, labs:proLabs, cheatsheets:proCheats, glossary:proGlossary, career:proCareer, faq:proFaq};
+    el("app").innerHTML = `
+    <div class="view"><main class="wrap">
+      <nav class="crumb"><a href="#/">${esc(t("home"))}</a><span>/</span><a href="#/resources">${esc(t("resources"))}</a><span>/</span><span>${esc(t(PRO_TITLES[which] || "resources"))}</span></nav>
+      ${bodies[which]()}
+    </main></div>`;
+    wireProPage(which);
+  }
+  function pageHero(kicker, titleKey, subKey){
+    return `<header class="page-hero">
+      <span class="eyebrow">◈ ${esc(t(kicker))}</span>
+      <h2>${esc(t(titleKey))}</h2>
+      <p>${esc(t(subKey))}</p>
+    </header>`;
+  }
+  function proTools(){
+    const cats = ["All"].concat([...new Set(TOOLS.map(x=>x.c))]);
+    return pageHero("pgTools","pgTools","pgToolsSub") + `
+      <div class="chips" id="toolChips">${cats.map((c,i)=>`<button class="chip${i===0?" on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+      <div class="tool-grid" id="toolGrid">${TOOLS.map(x=>`
+        <a class="tool-card" href="${x.u}" target="_blank" rel="noopener" data-cat="${esc(x.c)}">
+          <span class="tool-cat">${esc(x.c)}</span>
+          <h4>${esc(x.n)}</h4><p>${esc(x.d)}</p>
+          <span class="tool-go">↗</span>
+        </a>`).join("")}</div>`;
+  }
+  function proLabs(){
+    return pageHero("pgLabs","pgLabs","pgLabsSub") + `
+      <div class="lab-grid">${LABS.map(l=>`
+        <a class="lab-card" href="${l.u}" target="_blank" rel="noopener">
+          <div class="lab-badges"><span class="lab-price">${esc(l.price)}</span><span class="lab-best">${esc(l.best)}</span></div>
+          <h4>${esc(l.n)}</h4><p>${esc(l.d)}</p>
+          <span class="tool-go">↗</span>
+        </a>`).join("")}</div>`;
+  }
+  function proCheats(){
+    return pageHero("pgCheats","pgCheats","pgCheatsSub") + `
+      <div class="cheat-grid">${CHEATS.map((c,i)=>`
+        <div class="cheat-card">
+          <h4>${esc(c.t)}</h4><p>${esc(c.d)}</p>
+          <pre class="cheat-code">${c.cmds.map(esc).join("\n")}</pre>
+          <button class="mini-btn" data-cheat="${i}">⧉ ${esc(t("copy"))}</button>
+        </div>`).join("")}</div>`;
+  }
+  function proGlossary(){
+    return pageHero("pgGlossary","pgGlossary","pgGlossarySub") + `
+      <div class="searchbar glos-search"><input id="glosQ" type="search" placeholder="${esc(t("searchGlossary"))}" autocomplete="off"></div>
+      <div class="glos-list" id="glosList">${GLOSSARY.map(g=>`
+        <div class="glos-row" data-term="${esc(g[0].toLowerCase())}"><b>${esc(g[0])}</b><span>${esc(g[1])}</span></div>`).join("")}</div>`;
+  }
+  function proCareer(){
+    return pageHero("pgCareer","pgCareer","pgCareerSub") + `
+      <h3 class="sec-h">${esc(t("certPath"))}</h3>
+      <div class="cert-track">${CERTS.map((c,i)=>`
+        <div class="cert-card"><span class="cert-step">${i+1}</span>
+          <span class="cert-lvl">${esc(c.lvl)}</span>
+          <h4>${esc(c.n)}</h4><p>${esc(c.d)}</p>
+        </div>`).join("")}</div>
+      <h3 class="sec-h">${esc(t("rolesTitle"))}</h3>
+      <div class="role-grid">${ROLES.map(r=>`
+        <div class="role-card"><h4>${esc(r.t)}</h4><p>${esc(r.d)}</p>
+          <span class="role-skills">◈ ${esc(r.s)}</span>
+        </div>`).join("")}</div>`;
+  }
+  function proFaq(){
+    return pageHero("pgFaq","pgFaq","pgFaqSub") + `
+      <div class="faq-list">${FAQS.map(f=>`
+        <details class="faq"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}</div>`;
+  }
+  function wireProPage(which){
+    if (which === "tools"){
+      const chips = el("toolChips"), grid = el("toolGrid");
+      if (!chips || !grid) return;
+      chips.addEventListener("click", e=>{
+        const b = e.target.closest(".chip"); if (!b) return;
+        chips.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
+        b.classList.add("on");
+        const cat = b.dataset.cat;
+        grid.querySelectorAll(".tool-card").forEach(card=>{
+          card.style.display = (cat === "All" || card.dataset.cat === cat) ? "" : "none";
+        });
+      });
+    }
+    if (which === "cheatsheets"){
+      el("app").addEventListener("click", e=>{
+        const b = e.target.closest("[data-cheat]"); if (!b) return;
+        const c = CHEATS[+b.dataset.cheat];
+        const done = ()=>{ b.textContent = "✓ " + t("copied"); setTimeout(()=>{ b.innerHTML = "⧉ " + esc(t("copy")); }, 1500); };
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(c.cmds.join("\n")).then(done).catch(done);
+        } else done();
+      });
+    }
+    if (which === "glossary"){
+      const q = el("glosQ"), list = el("glosList");
+      if (!q || !list) return;
+      q.addEventListener("input", ()=>{
+        const v = q.value.trim().toLowerCase();
+        list.querySelectorAll(".glos-row").forEach(r=>{
+          r.style.display = (!v || r.dataset.term.includes(v) || r.textContent.toLowerCase().includes(v)) ? "" : "none";
+        });
+      });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);

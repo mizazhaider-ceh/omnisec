@@ -55,6 +55,18 @@ From absolute beginner to advanced bug bounty hunter, one roadmap, end to end.
   <a href="https://mizazhaider-ceh.github.io/omnisec/"><b>👉 Launch the interactive roadmap</b></a>
 </div>
 
+## 🧰 Beyond the Roadmap
+
+OmniSec is a full learning platform, not just a roadmap:
+
+- **Tools Arsenal** — every hacker's toolkit, categorized and explained
+- **Practice Labs** — the best legal training grounds, free and paid
+- **Cheat Sheets** — copy-paste field manual for scans, shells, privesc and more
+- **Glossary** — every beginner term, defined in plain words
+- **Certs & Career** — certifications that matter and roles you can land
+- **FAQ** — honest answers for beginners
+- **Productivity** — study streaks, per-topic personal notes, and bookmarks
+
 ## 🗺️ The 7 phases
 
 | # | Phase | What you conquer |
