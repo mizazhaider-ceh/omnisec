@@ -103,8 +103,12 @@
   function listMode(){
     return state.query.trim() !== "" || state.filter === "skip";
   }
-  function list(items, icon){
-    return `<ul class="d-list">${items.map(i=>`<li><span class="li-ico">${icon}</span><span>${esc(i)}</span></li>`).join("")}</ul>`;
+  function conceptList(items){
+    const icons = ["◈","✦","⬢","⬣","◉","◎"];
+    return `<ul class="concepts">${items.map((i,ix)=>`<li><span class="c-ico">${icons[ix % icons.length]}</span><span>${esc(i)}</span></li>`).join("")}</ul>`;
+  }
+  function stepList(items){
+    return `<ol class="steps">${items.map(i=>`<li><span>${esc(i)}</span></li>`).join("")}</ol>`;
   }
   function badges(n, done){
     const lvName = LEVELS[n.lv] || "";
@@ -116,9 +120,11 @@
 
   // ================= ROUTER =================
   function route(){
+    if (window._storyTimers){ window._storyTimers.forEach(clearTimeout); window._storyTimers = null; }
     const h = location.hash || "#/";
     const parts = h.replace(/^#\/?/, "").split("/");
     window.scrollTo({ top: 0 });
+    if (parts[0] === "story") return viewStory();
     if (parts[0] === "phase" && parts[1]){
       const p = ROADMAP.find(x => x.id === parts[1]);
       if (p) return viewPhase(p);
@@ -132,6 +138,103 @@
 
   function setDocTitle(s){
     document.title = s + " | The OmniSec Roadmap";
+  }
+
+  // ================= VIEW: STORY (The PenTrix x OmniSec) =================
+  function viewStory(){
+    state.view = "story"; state.viewId = null;
+    setDocTitle(t("story"));
+    const app = el("app");
+    app.innerHTML = `
+    <div class="view"><main class="wrap">
+      <nav class="crumb"><a href="#/">${esc(t("home"))}</a><span>/</span><span>${esc(t("story"))}</span></nav>
+      <div class="story-stage" id="storyStage">
+        <div class="story-kickerline">${esc(t("storyKicker"))}</div>
+        <canvas id="burst"></canvas>
+        <div class="orb orb-a"><span>The PenTrix</span></div>
+        <div class="orb orb-b"><span>OmniSec</span></div>
+        <div class="flash"></div>
+        <div class="core">✦</div>
+        <div class="story-ctrl">
+          <button id="replayStory">↻ ${esc(t("replay"))}</button>
+          <button id="skipStory">${esc(t("skip"))} →</button>
+        </div>
+      </div>
+      <div class="story-content" id="storyContent" hidden>
+        <div class="phase-kicker" style="text-align:center">${esc(t("storyKicker"))}</div>
+        <h2>${t("storyTitle")}</h2>
+        <p class="lede">${t("storyP1")}</p>
+        <p class="lede">${t("storyP2")}</p>
+        <p class="lede">${t("storyP3")}</p>
+        <div class="pillars">
+          <div class="pillar"><span class="p-ico">🎯</span><h3>${esc(t("pillar1t"))}</h3><p>${esc(t("pillar1d"))}</p></div>
+          <div class="pillar"><span class="p-ico">🛠️</span><h3>${esc(t("pillar2t"))}</h3><p>${esc(t("pillar2d"))}</p></div>
+          <div class="pillar"><span class="p-ico">🌍</span><h3>${esc(t("pillar3t"))}</h3><p>${esc(t("pillar3d"))}</p></div>
+        </div>
+        <div class="story-cta">
+          <a class="btn btn-primary" href="#/">${esc(t("startLearning"))} →</a>
+        </div>
+      </div>
+    </main></div>`;
+    el("replayStory").addEventListener("click", playStory);
+    el("skipStory").addEventListener("click", skipStory);
+    playStory();
+  }
+
+  function playStory(){
+    const stage = el("storyStage"), content = el("storyContent");
+    if (!stage) return;
+    if (window._storyTimers){ window._storyTimers.forEach(clearTimeout); }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    stage.classList.remove("s1","s2","s3");
+    if (content){ content.hidden = true; content.classList.remove("show"); }
+    if (reduce){ skipStory(); return; }
+    void stage.offsetWidth;
+    const timers = [];
+    timers.push(setTimeout(()=>{ const s=el("storyStage"); if(s) s.classList.add("s1"); }, 200));
+    timers.push(setTimeout(()=>{ const s=el("storyStage"); if(s) s.classList.add("s2"); }, 1600));
+    timers.push(setTimeout(()=>{ const s=el("storyStage"); if(s){ s.classList.add("s3"); } burst(); }, 2800));
+    timers.push(setTimeout(()=>{
+      const c=el("storyContent"); if(!c) return;
+      c.hidden = false; requestAnimationFrame(()=>c.classList.add("show"));
+    }, 3700));
+    window._storyTimers = timers;
+  }
+  function skipStory(){
+    if (window._storyTimers){ window._storyTimers.forEach(clearTimeout); window._storyTimers = null; }
+    const stage = el("storyStage"), content = el("storyContent");
+    if (stage) stage.classList.add("s3");
+    if (content){ content.hidden = false; content.classList.add("show"); }
+  }
+  function burst(){
+    const cv = el("burst"), stage = el("storyStage");
+    if (!cv || !stage) return;
+    const w = cv.width = stage.clientWidth, h = cv.height = stage.clientHeight;
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+    const cx = w/2, cy = h/2;
+    const cols = ["45,212,191","167,139,250","244,114,182","255,255,255","56,189,248"];
+    const ps = Array.from({length:170}, ()=>({
+      a: Math.random()*Math.PI*2, sp: 2+Math.random()*7.5,
+      r: 1.5+Math.random()*3.5, life: 1, decay: .008+Math.random()*.014,
+      c: cols[(Math.random()*cols.length)|0], x: cx, y: cy
+    }));
+    ctx.globalCompositeOperation = "lighter";
+    (function frame(){
+      ctx.clearRect(0,0,w,h);
+      let alive = false;
+      for (const p of ps){
+        if (p.life <= 0) continue;
+        alive = true;
+        p.x += Math.cos(p.a)*p.sp; p.y += Math.sin(p.a)*p.sp;
+        p.sp *= .985; p.life -= p.decay;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.max(p.r*p.life,.1), 0, 7);
+        ctx.fillStyle = "rgba(" + p.c + "," + Math.max(p.life,0).toFixed(3) + ")";
+        ctx.fill();
+      }
+      if (alive) requestAnimationFrame(frame); else ctx.clearRect(0,0,w,h);
+    })();
   }
 
   // ================= VIEW: HOME =================
@@ -149,7 +252,7 @@
       <section class="hero">
         <div class="wrap">
           <div class="hero-orbit"><div class="hero-mascot" id="heroMascot"></div></div>
-          <span class="eyebrow">&lt;/&gt; Open-Source | Offline-First | Community-Driven</span>
+          <span class="eyebrow">✦ ${esc(t("pentrixTag"))} · Open-Source | Offline-First</span>
           <h1>The <span class="grad">OmniSec</span> Roadmap</h1>
           <p id="tagline">${esc(t("tagline"))}</p>
           <p id="intro">${esc(t("intro"))}</p>
@@ -163,6 +266,7 @@
             <a class="btn btn-primary" href="${ctaHref}">${ctaLabel}</a>
             <a class="btn btn-ghost" href="#why">${esc(t("ctaWhy"))}</a>
           </div>
+          <div><a class="story-link" href="#/story">✨ ${esc(t("storyLink"))} →</a></div>
           <div class="scroll-hint">Scroll<span>↓</span></div>
         </div>
       </section>
@@ -385,8 +489,8 @@
       ${tipBlock}
       <div class="detail-grid">
         <div class="detail-main">
-          ${(n.learn&&n.learn.length) ? `<section class="d-card"><h5>🎯 ${esc(t("learnHdr"))}</h5>${list(n.learn,"•")}</section>` : ""}
-          ${(n.do&&n.do.length) ? `<section class="d-card"><h5>🛠️ ${esc(t("doHdr"))}</h5>${list(n.do,"›")}</section>` : ""}
+          ${(n.learn&&n.learn.length) ? `<section class="d-card"><h5>🎯 ${esc(t("learnHdr"))} <span class="sec-count">${n.learn.length}</span></h5>${conceptList(n.learn)}</section>` : ""}
+          ${(n.do&&n.do.length) ? `<section class="d-card"><h5>🛠️ ${esc(t("doHdr"))} <span class="sec-count">${n.do.length}</span></h5>${stepList(n.do)}</section>` : ""}
         </div>
         <aside class="detail-side">
           ${tools ? `<section class="d-card"><h5>🧰 ${esc(t("tools"))}</h5><div class="tools">${tools}</div></section>` : ""}
@@ -435,6 +539,7 @@
     el("builtBy").textContent    = t("built");
     el("role").textContent       = t("role");
     el("contact").textContent    = t("contact");
+    const sl = el("storyLink"); if (sl) sl.textContent = "✨ " + t("story");
     buildLangSelect();
   }
   function buildLangSelect(){

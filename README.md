@@ -4,6 +4,8 @@
 
 ### Zero-to-Hero Offensive Security, taught the way I wished someone taught me.
 
+**✦ A The PenTrix Project** — OmniSec is the cybersecurity track of [The PenTrix](https://www.mizazhaider-ceh.dev/), the student learning platform I'm building.
+
 [![Stars](https://img.shields.io/github/stars/mizazhaider-ceh/omnisec?style=for-the-badge&logo=github&color=2dd4bf)](https://github.com/mizazhaider-ceh/omnisec/stargazers)
 [![Forks](https://img.shields.io/github/forks/mizazhaider-ceh/omnisec?style=for-the-badge&logo=github&color=a78bfa)](https://github.com/mizazhaider-ceh/omnisec/network/members)
 [![License](https://img.shields.io/github/license/mizazhaider-ceh/omnisec?style=for-the-badge&color=38bdf8)](LICENSE)
