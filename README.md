@@ -34,6 +34,7 @@ From absolute beginner to advanced bug bounty hunter, one roadmap, end to end.
 | Feature | Details |
 |---|---|
 | 🗺️ **Full curriculum** | 7 phases: mindset and ethics, fundamentals, networking, Linux, Windows, web hacking, bug bounty and career |
+| 🗺️ **Multi-page experience** | Home with 7 phase cards, each phase its own page, every topic a dedicated detail page with breadcrumbs and prev/next navigation |
 | ⭐ **Don't-Skip Gems** | Flagged topics + a dedicated filter for the things learners quietly skip |
 | ✅ **Progress tracking** | Tick topics off, your progress saves in the browser. Live ring, per-phase counters |
 | 🌍 **70+ languages** | Instant UI switching with full RTL support (Arabic, Urdu, Persian, Hebrew) |
