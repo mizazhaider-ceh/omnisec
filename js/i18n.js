@@ -1,0 +1,116 @@
+/* =====================================================================
+   The OmniSec Roadmap: Internationalization (i18n)
+   70+ selectable languages. Major languages fully translated for the UI
+   chrome; all others gracefully fall back to English so nothing breaks.
+   Curriculum body text stays in English (security terms are universal),
+   while the interface, navigation and labels localize instantly.
+   ===================================================================== */
+
+// 70+ languages. dir:"rtl" for right-to-left scripts.
+const LANGS = [
+  {c:"en",n:"English",dir:"ltr"},      {c:"es",n:"Español",dir:"ltr"},
+  {c:"fr",n:"Français",dir:"ltr"},     {c:"de",n:"Deutsch",dir:"ltr"},
+  {c:"pt",n:"Português",dir:"ltr"},    {c:"it",n:"Italiano",dir:"ltr"},
+  {c:"nl",n:"Nederlands",dir:"ltr"},   {c:"ru",n:"Русский",dir:"ltr"},
+  {c:"uk",n:"Українська",dir:"ltr"},   {c:"pl",n:"Polski",dir:"ltr"},
+  {c:"tr",n:"Türkçe",dir:"ltr"},       {c:"ar",n:"العربية",dir:"rtl"},
+  {c:"ur",n:"اردو",dir:"rtl"},         {c:"fa",n:"فارسی",dir:"rtl"},
+  {c:"he",n:"עברית",dir:"rtl"},        {c:"hi",n:"हिन्दी",dir:"ltr"},
+  {c:"bn",n:"বাংলা",dir:"ltr"},        {c:"pa",n:"ਪੰਜਾਬੀ",dir:"ltr"},
+  {c:"ta",n:"தமிழ்",dir:"ltr"},        {c:"te",n:"తెలుగు",dir:"ltr"},
+  {c:"mr",n:"मराठी",dir:"ltr"},        {c:"gu",n:"ગુજરાતી",dir:"ltr"},
+  {c:"kn",n:"ಕನ್ನಡ",dir:"ltr"},       {c:"ml",n:"മലയാളം",dir:"ltr"},
+  {c:"zh",n:"中文 (简体)",dir:"ltr"},   {c:"zh-TW",n:"中文 (繁體)",dir:"ltr"},
+  {c:"ja",n:"日本語",dir:"ltr"},        {c:"ko",n:"한국어",dir:"ltr"},
+  {c:"vi",n:"Tiếng Việt",dir:"ltr"},   {c:"th",n:"ไทย",dir:"ltr"},
+  {c:"id",n:"Indonesia",dir:"ltr"},    {c:"ms",n:"Melayu",dir:"ltr"},
+  {c:"fil",n:"Filipino",dir:"ltr"},    {c:"km",n:"ខ្មែរ",dir:"ltr"},
+  {c:"my",n:"မြန်မာ",dir:"ltr"},        {c:"lo",n:"ລາວ",dir:"ltr"},
+  {c:"si",n:"සිංහල",dir:"ltr"},        {c:"ne",n:"नेपाली",dir:"ltr"},
+  {c:"sw",n:"Kiswahili",dir:"ltr"},    {c:"am",n:"አማርኛ",dir:"ltr"},
+  {c:"ha",n:"Hausa",dir:"ltr"},        {c:"yo",n:"Yorùbá",dir:"ltr"},
+  {c:"ig",n:"Igbo",dir:"ltr"},         {c:"zu",n:"isiZulu",dir:"ltr"},
+  {c:"af",n:"Afrikaans",dir:"ltr"},    {c:"el",n:"Ελληνικά",dir:"ltr"},
+  {c:"cs",n:"Čeština",dir:"ltr"},      {c:"sk",n:"Slovenčina",dir:"ltr"},
+  {c:"hu",n:"Magyar",dir:"ltr"},       {c:"ro",n:"Română",dir:"ltr"},
+  {c:"bg",n:"Български",dir:"ltr"},     {c:"sr",n:"Српски",dir:"ltr"},
+  {c:"hr",n:"Hrvatski",dir:"ltr"},     {c:"sl",n:"Slovenščina",dir:"ltr"},
+  {c:"sq",n:"Shqip",dir:"ltr"},        {c:"lt",n:"Lietuvių",dir:"ltr"},
+  {c:"lv",n:"Latviešu",dir:"ltr"},     {c:"et",n:"Eesti",dir:"ltr"},
+  {c:"fi",n:"Suomi",dir:"ltr"},        {c:"sv",n:"Svenska",dir:"ltr"},
+  {c:"da",n:"Dansk",dir:"ltr"},        {c:"no",n:"Norsk",dir:"ltr"},
+  {c:"is",n:"Íslenska",dir:"ltr"},     {c:"ga",n:"Gaeilge",dir:"ltr"},
+  {c:"ca",n:"Català",dir:"ltr"},       {c:"eu",n:"Euskara",dir:"ltr"},
+  {c:"gl",n:"Galego",dir:"ltr"},       {c:"az",n:"Azərbaycan",dir:"ltr"},
+  {c:"kk",n:"Қазақ",dir:"ltr"},        {c:"uz",n:"Oʻzbek",dir:"ltr"},
+  {c:"ka",n:"ქართული",dir:"ltr"},      {c:"hy",n:"Հայերեն",dir:"ltr"},
+  {c:"mn",n:"Монгол",dir:"ltr"},       {c:"so",n:"Soomaali",dir:"ltr"},
+  {c:"mt",n:"Malti",dir:"ltr"}
+];
+
+// UI string dictionary. Keys present in a language override English.
+const STRINGS = {
+  en: {
+    tagline:"Zero-to-Hero Offensive Security",
+    intro:"A complete, interactive, offline-first roadmap that takes you from absolute beginner to advanced bug bounty hunter. Every topic is a mini-lesson: what to learn, what to do, which tools to use, and where to go deeper.",
+    ctaStart:"Start the Roadmap",
+    ctaWhy:"Why I Built This",
+    search:"Search topics, tools, tags…",
+    filterAll:"All Topics",
+    filterSkip:"⭐ Don't-Skip Gems",
+    progress:"Progress",
+    of:"of",
+    done:"completed",
+    reset:"Reset Progress",
+    expand:"Expand All",
+    collapse:"Collapse All",
+    tools:"Tools",
+    skipBadge:"Most students skip this",
+    skipTitle:"The Small Things That Matter",
+    skipDesc:"These often-skipped topics quietly separate amateurs from professionals.",
+    built:"Built with passion by",
+    role:"Lover of AI × Offensive Security",
+    contact:"Connect on LinkedIn",
+    language:"Language",
+    theme:"Theme",
+    light:"Light",
+    dark:"Dark",
+    noResults:"No topics match your search.",
+    phases:"Phases",
+    topics:"Topics",
+    confirmReset:"Reset all your progress? This cannot be undone.",
+    legend:"Click any card to mark it learned",
+    learnHdr:"What to Learn",
+    doHdr:"What to Do (Hands-On)",
+    resHdr:"Free Resources",
+    tipHdr:"Don't get this wrong",
+    markDone:"Mark as learned",
+    gemTag:"Don't skip",
+    expand:"Expand All",
+    collapse:"Collapse All",
+    howTitle:"How to use this roadmap",
+    howBody:"Follow the phases <b>top to bottom</b>: they build on each other. Each topic is numbered in the order to learn it. <b>Click a card to expand</b> it into a full lesson: 🎯 what to learn, 🛠️ exactly what to do (hands-on), and 📚 free resources. Tick the <b>checkbox</b> when you've actually practised it: your progress saves automatically. Topics marked <b>⭐</b> are the ones most learners skip but shouldn't. Filter to <b>⭐ Don't-Skip Gems</b> any time, and use search to jump to a tool or topic."
+  },
+  es:{tagline:"Seguridad Ofensiva de Cero a Héroe",intro:"Una hoja de ruta completa, interactiva y sin conexión que te lleva de principiante absoluto a cazador avanzado de recompensas por errores.",search:"Buscar temas, herramientas, etiquetas…",filterAll:"Todos los temas",filterSkip:"⭐ Joyas imprescindibles",progress:"Progreso",of:"de",done:"completado",reset:"Reiniciar progreso",expand:"Expandir todo",collapse:"Contraer todo",tools:"Herramientas",skipBadge:"La mayoría se lo salta",skipTitle:"Las pequeñas cosas que importan",skipDesc:"Estos temas, a menudo omitidos, separan a los aficionados de los profesionales.",built:"Creado con pasión por",role:"Amante de la IA × Seguridad Ofensiva",contact:"Conectar en LinkedIn",language:"Idioma",theme:"Tema",light:"Claro",dark:"Oscuro",noResults:"Ningún tema coincide con tu búsqueda.",phases:"Fases",topics:"Temas",confirmReset:"¿Reiniciar todo tu progreso? Esto no se puede deshacer.",legend:"Haz clic en cualquier tarjeta para marcarla como aprendida"},
+  fr:{tagline:"Sécurité Offensive : du Débutant à l'Expert",intro:"Une feuille de route complète, interactive et hors ligne qui vous emmène du débutant absolu au chasseur de bugs avancé.",search:"Rechercher sujets, outils, tags…",filterAll:"Tous les sujets",filterSkip:"⭐ Pépites à ne pas manquer",progress:"Progression",of:"sur",done:"terminé",reset:"Réinitialiser",expand:"Tout déplier",collapse:"Tout replier",tools:"Outils",skipBadge:"Souvent ignoré",skipTitle:"Les petits détails qui comptent",skipDesc:"Ces sujets souvent ignorés distinguent discrètement les amateurs des professionnels.",built:"Créé avec passion par",role:"Amoureux de l'IA × Sécurité Offensive",contact:"Se connecter sur LinkedIn",language:"Langue",theme:"Thème",light:"Clair",dark:"Sombre",noResults:"Aucun sujet ne correspond.",phases:"Phases",topics:"Sujets",confirmReset:"Réinitialiser toute votre progression ? Irréversible.",legend:"Cliquez sur une carte pour la marquer comme apprise"},
+  de:{tagline:"Offensive Security von Null zum Helden",intro:"Ein vollständiger, interaktiver Offline-Fahrplan vom absoluten Anfänger zum fortgeschrittenen Bug-Bounty-Jäger.",search:"Themen, Tools, Tags suchen…",filterAll:"Alle Themen",filterSkip:"⭐ Nicht-überspringen-Perlen",progress:"Fortschritt",of:"von",done:"abgeschlossen",reset:"Zurücksetzen",expand:"Alle ausklappen",collapse:"Alle einklappen",tools:"Werkzeuge",skipBadge:"Wird oft übersprungen",skipTitle:"Die kleinen Dinge, die zählen",skipDesc:"Diese oft übersprungenen Themen trennen Amateure von Profis.",built:"Mit Leidenschaft erstellt von",role:"Liebhaber von KI × Offensive Security",contact:"Auf LinkedIn vernetzen",language:"Sprache",theme:"Thema",light:"Hell",dark:"Dunkel",noResults:"Keine Themen gefunden.",phases:"Phasen",topics:"Themen",confirmReset:"Gesamten Fortschritt zurücksetzen? Nicht umkehrbar.",legend:"Klicke eine Karte an, um sie als gelernt zu markieren"},
+  pt:{tagline:"Segurança Ofensiva do Zero ao Herói",intro:"Um roteiro completo, interativo e offline que te leva de iniciante absoluto a caçador avançado de bugs.",search:"Pesquisar tópicos, ferramentas, tags…",filterAll:"Todos os tópicos",filterSkip:"⭐ Joias essenciais",progress:"Progresso",of:"de",done:"concluído",reset:"Redefinir progresso",expand:"Expandir tudo",collapse:"Recolher tudo",tools:"Ferramentas",skipBadge:"A maioria pula isto",skipTitle:"As pequenas coisas que importam",skipDesc:"Estes tópicos frequentemente ignorados separam amadores de profissionais.",built:"Criado com paixão por",role:"Amante de IA × Segurança Ofensiva",contact:"Conectar no LinkedIn",language:"Idioma",theme:"Tema",light:"Claro",dark:"Escuro",noResults:"Nenhum tópico encontrado.",phases:"Fases",topics:"Tópicos",confirmReset:"Redefinir todo o progresso? Isto é irreversível.",legend:"Clique em qualquer cartão para marcá-lo como aprendido"},
+  ru:{tagline:"Наступательная безопасность от нуля до героя",intro:"Полная интерактивная офлайн-дорожная карта от абсолютного новичка до продвинутого охотника за багами.",search:"Поиск тем, инструментов, тегов…",filterAll:"Все темы",filterSkip:"⭐ Нельзя пропускать",progress:"Прогресс",of:"из",done:"завершено",reset:"Сбросить прогресс",expand:"Развернуть всё",collapse:"Свернуть всё",tools:"Инструменты",skipBadge:"Часто пропускают",skipTitle:"Мелочи, которые важны",skipDesc:"Эти часто пропускаемые темы отличают любителей от профессионалов.",built:"Создано с любовью",role:"Любитель ИИ × Наступательной безопасности",contact:"LinkedIn",language:"Язык",theme:"Тема",light:"Светлая",dark:"Тёмная",noResults:"Ничего не найдено.",phases:"Этапы",topics:"Темы",confirmReset:"Сбросить весь прогресс? Это необратимо.",legend:"Нажмите на карточку, чтобы отметить изученное"},
+  ar:{tagline:"الأمن الهجومي من الصفر إلى الاحتراف",intro:"خارطة طريق كاملة وتفاعلية تعمل دون اتصال تأخذك من المبتدئ تمامًا إلى صائد ثغرات متقدم.",search:"ابحث عن مواضيع وأدوات ووسوم…",filterAll:"كل المواضيع",filterSkip:"⭐ جواهر لا تتخطاها",progress:"التقدم",of:"من",done:"مكتمل",reset:"إعادة ضبط التقدم",expand:"توسيع الكل",collapse:"طي الكل",tools:"الأدوات",skipBadge:"معظم الطلاب يتخطونه",skipTitle:"الأشياء الصغيرة المهمة",skipDesc:"هذه المواضيع التي غالبًا ما يتم تخطيها تفصل الهواة عن المحترفين.",built:"صُنع بشغف بواسطة",role:"محب للذكاء الاصطناعي × الأمن الهجومي",contact:"تواصل على LinkedIn",language:"اللغة",theme:"السمة",light:"فاتح",dark:"داكن",noResults:"لا توجد مواضيع مطابقة.",phases:"المراحل",topics:"المواضيع",confirmReset:"إعادة ضبط كل تقدمك؟ لا يمكن التراجع.",legend:"انقر على أي بطاقة لتعليمها كمُتعلَّمة"},
+  ur:{tagline:"جارحانہ سیکیورٹی صفر سے ہیرو تک",intro:"ایک مکمل، انٹرایکٹو اور آف لائن روڈ میپ جو آپ کو بالکل ابتدائی سے ایڈوانس بگ باؤنٹی ہنٹر تک لے جاتا ہے۔",search:"موضوعات، ٹولز، ٹیگز تلاش کریں…",filterAll:"تمام موضوعات",filterSkip:"⭐ نہ چھوڑنے والے جواہر",progress:"پیش رفت",of:"میں سے",done:"مکمل",reset:"پیش رفت ری سیٹ کریں",expand:"سب کھولیں",collapse:"سب بند کریں",tools:"ٹولز",skipBadge:"زیادہ تر طلبہ اسے چھوڑ دیتے ہیں",skipTitle:"چھوٹی چیزیں جو اہم ہیں",skipDesc:"یہ اکثر چھوڑے جانے والے موضوعات شوقیہ اور پیشہ ور میں فرق کرتے ہیں۔",built:"محبت سے بنایا گیا از",role:"اے آئی اور جارحانہ سیکیورٹی کا عاشق",contact:"LinkedIn پر رابطہ کریں",language:"زبان",theme:"تھیم",light:"روشن",dark:"گہرا",noResults:"کوئی موضوع نہیں ملا۔",phases:"مراحل",topics:"موضوعات",confirmReset:"تمام پیش رفت ری سیٹ کریں؟ یہ واپس نہیں ہوگا۔",legend:"سیکھے ہوئے کے طور پر نشان لگانے کے لیے کسی بھی کارڈ پر کلک کریں"},
+  hi:{tagline:"ऑफेंसिव सिक्योरिटी: ज़ीरो से हीरो तक",intro:"एक संपूर्ण, इंटरैक्टिव और ऑफ़लाइन रोडमैप जो आपको बिल्कुल शुरुआती से उन्नत बग बाउंटी हंटर तक ले जाता है।",search:"विषय, टूल, टैग खोजें…",filterAll:"सभी विषय",filterSkip:"⭐ न छोड़ने योग्य रत्न",progress:"प्रगति",of:"में से",done:"पूर्ण",reset:"प्रगति रीसेट करें",expand:"सभी खोलें",collapse:"सभी बंद करें",tools:"उपकरण",skipBadge:"अधिकांश छात्र इसे छोड़ देते हैं",skipTitle:"छोटी चीज़ें जो मायने रखती हैं",skipDesc:"ये अक्सर छोड़े गए विषय शौकिया और पेशेवर के बीच अंतर करते हैं।",built:"जुनून से बनाया गया",role:"एआई × ऑफेंसिव सिक्योरिटी का प्रेमी",contact:"LinkedIn पर जुड़ें",language:"भाषा",theme:"थीम",light:"हल्का",dark:"गहरा",noResults:"कोई विषय नहीं मिला।",phases:"चरण",topics:"विषय",confirmReset:"सारी प्रगति रीसेट करें? यह पूर्ववत नहीं होगा।",legend:"सीखा हुआ चिह्नित करने के लिए किसी कार्ड पर क्लिक करें"},
+  zh:{tagline:"攻击性安全：从零到英雄",intro:"一份完整、交互式、离线优先的路线图，带你从绝对的初学者成长为高级漏洞赏金猎人。",search:"搜索主题、工具、标签…",filterAll:"所有主题",filterSkip:"⭐ 不可跳过的精华",progress:"进度",of:"/",done:"已完成",reset:"重置进度",expand:"全部展开",collapse:"全部收起",tools:"工具",skipBadge:"大多数学生会跳过",skipTitle:"重要的小细节",skipDesc:"这些常被跳过的主题悄悄地把业余者与专业人士区分开来。",built:"用心打造",role:"AI 与攻击性安全的爱好者",contact:"在领英联系",language:"语言",theme:"主题",light:"浅色",dark:"深色",noResults:"没有匹配的主题。",phases:"阶段",topics:"主题",confirmReset:"重置所有进度？此操作无法撤销。",legend:"点击任意卡片标记为已学习"},
+  ja:{tagline:"攻撃的セキュリティ：ゼロからヒーローへ",intro:"完全・インタラクティブ・オフライン対応のロードマップ。まったくの初心者から上級バグバウンティハンターへ。",search:"トピック・ツール・タグを検索…",filterAll:"すべてのトピック",filterSkip:"⭐ 飛ばせない要点",progress:"進捗",of:"/",done:"完了",reset:"進捗をリセット",expand:"すべて展開",collapse:"すべて折りたたむ",tools:"ツール",skipBadge:"多くの人が飛ばす",skipTitle:"大切な小さなこと",skipDesc:"見落とされがちなこれらのトピックが、素人とプロを静かに分けます。",built:"情熱を込めて制作",role:"AI × 攻撃的セキュリティの愛好家",contact:"LinkedInでつながる",language:"言語",theme:"テーマ",light:"ライト",dark:"ダーク",noResults:"一致するトピックがありません。",phases:"フェーズ",topics:"トピック",confirmReset:"すべての進捗をリセットしますか？元に戻せません。",legend:"カードをクリックして学習済みにする"},
+  tr:{tagline:"Sıfırdan Kahramana Saldırı Güvenliği",intro:"Sizi mutlak başlangıç seviyesinden ileri düzey hata ödülü avcısına taşıyan tam, etkileşimli ve çevrimdışı bir yol haritası.",search:"Konu, araç, etiket ara…",filterAll:"Tüm Konular",filterSkip:"⭐ Atlanmaması Gerekenler",progress:"İlerleme",of:"/",done:"tamamlandı",reset:"İlerlemeyi Sıfırla",expand:"Tümünü Aç",collapse:"Tümünü Kapat",tools:"Araçlar",skipBadge:"Çoğu öğrenci atlar",skipTitle:"Önemli Küçük Şeyler",skipDesc:"Sık atlanan bu konular amatörleri profesyonellerden ayırır.",built:"Tutkuyla geliştirildi",role:"AI × Saldırı Güvenliği Aşığı",contact:"LinkedIn'de bağlan",language:"Dil",theme:"Tema",light:"Açık",dark:"Koyu",noResults:"Eşleşen konu yok.",phases:"Aşamalar",topics:"Konular",confirmReset:"Tüm ilerleme sıfırlansın mı? Geri alınamaz.",legend:"Öğrenildi olarak işaretlemek için bir karta tıklayın"},
+  id:{tagline:"Keamanan Ofensif dari Nol ke Mahir",intro:"Peta jalan lengkap, interaktif, dan offline yang membawa Anda dari pemula mutlak hingga pemburu bug bounty tingkat lanjut.",search:"Cari topik, alat, tag…",filterAll:"Semua Topik",filterSkip:"⭐ Permata Wajib",progress:"Kemajuan",of:"dari",done:"selesai",reset:"Atur Ulang Kemajuan",expand:"Buka Semua",collapse:"Tutup Semua",tools:"Alat",skipBadge:"Sering dilewati",skipTitle:"Hal Kecil yang Penting",skipDesc:"Topik yang sering dilewati ini diam-diam membedakan amatir dari profesional.",built:"Dibuat dengan semangat oleh",role:"Pencinta AI × Keamanan Ofensif",contact:"Terhubung di LinkedIn",language:"Bahasa",theme:"Tema",light:"Terang",dark:"Gelap",noResults:"Tidak ada topik yang cocok.",phases:"Fase",topics:"Topik",confirmReset:"Atur ulang semua kemajuan? Tidak bisa dibatalkan.",legend:"Klik kartu mana pun untuk menandai sudah dipelajari"}
+};
+
+const I18N = (function(){
+  function dict(code){ return STRINGS[code] || STRINGS.en; }
+  function t(code, key){
+    const d = dict(code);
+    return (d && d[key] != null) ? d[key] : STRINGS.en[key];
+  }
+  function meta(code){ return LANGS.find(l=>l.c===code) || LANGS[0]; }
+  return { LANGS, t, meta };
+})();

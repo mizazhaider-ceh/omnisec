@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The OmniSec Roadmap | Zero-to-Hero Offensive Security</title>
+  <meta name="description" content="A complete, interactive, offline-first roadmap for offensive security and penetration testing. From absolute beginner to advanced bug bounty hunter. 70+ languages, local progress tracking. Built by Muhammad Izaz Haider." />
+  <meta name="author" content="Muhammad Izaz Haider" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#04060d" />
+  <meta property="og:title" content="The OmniSec Roadmap | Zero-to-Hero Offensive Security" />
+  <meta property="og:description" content="The interactive, offline-first roadmap from absolute beginner to advanced bug bounty hunter. 7 phases, 50+ topics, 70+ languages." />
+  <meta property="og:type" content="website" />
+  <!-- Fonts (optional; gracefully falls back to system fonts offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%232dd4bf'/><stop offset='1' stop-color='%23a78bfa'/></linearGradient></defs><rect width='100' height='100' rx='24' fill='url(%23g)'/><text x='50' y='69' font-size='56' text-anchor='middle' fill='white' font-family='monospace' font-weight='bold'>&gt;_</text></svg>" />
+</head>
+<body>
+
+  <!-- Galaxy background layers -->
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="nebula n1" aria-hidden="true"></div>
+  <div class="nebula n2" aria-hidden="true"></div>
+  <div class="nebula n3" aria-hidden="true"></div>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <span class="logo">&gt;_</span>
+        <span>Omni<b>Sec</b></span>
+      </div>
+      <div class="spacer"></div>
+
+      <div class="ctrl">
+        <label id="langLabel" for="langSelect">Language</label>
+        <select id="langSelect" class="select" aria-label="Language"></select>
+      </div>
+
+      <button id="themeToggle" class="tbtn" aria-pressed="true" title="Toggle theme">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <span><span id="themeLabel">Theme</span>: <b id="themeName">Dark</b></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-orbit">
+        <div class="hero-mascot" id="heroMascot"></div>
+      </div>
+      <span class="eyebrow">&lt;/&gt; Open-Source | Offline-First | Community-Driven</span>
+      <h1>The <span class="grad">OmniSec</span> Roadmap</h1>
+      <p id="tagline">Zero-to-Hero Offensive Security</p>
+      <p id="intro">A complete, interactive, offline-first roadmap that takes you from absolute beginner to advanced bug bounty hunter. Every topic is a mini-lesson: what to learn, what to do, which tools to use, and where to go deeper.</p>
+      <div class="hero-badges">
+        <span class="badge"><span class="dot"></span>7 Phases</span>
+        <span class="badge"><span class="dot"></span>50+ Topics</span>
+        <span class="badge"><span class="dot"></span>70+ Languages</span>
+        <span class="badge"><span class="dot"></span>100% Offline</span>
+        <span class="badge"><span class="dot"></span>Progress Tracking</span>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#roadmap" id="ctaStart">Start the Roadmap</a>
+        <a class="btn btn-ghost" href="#why" id="ctaWhy">Why I Built This</a>
+      </div>
+      <div class="scroll-hint">Scroll<span>↓</span></div>
+    </div>
+  </section>
+
+  <main class="wrap">
+
+    <!-- ============ DASHBOARD ============ -->
+    <div class="dash">
+      <div class="panel">
+        <div class="search-row">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+            <input id="search" type="search" placeholder="Search topics, tools, tags..." autocomplete="off" />
+          </div>
+          <div class="chips">
+            <button id="fAll"  class="chip active">All Topics</button>
+            <button id="fSkip" class="chip">⭐ Don't-Skip Gems</button>
+          </div>
+        </div>
+        <div class="toolbar-row">
+          <div class="legend" id="legend">Click any card to expand the lesson, tick the box when learned</div>
+          <div class="exp-btns">
+            <button id="expandAll" class="mini">Expand All</button>
+            <button id="collapseAll" class="mini">Collapse All</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel prog-panel">
+        <div class="ring" id="ring"><div class="inner" id="ringPct">0%</div></div>
+        <div class="prog-meta">
+          <div class="lbl" id="progLabel">Progress</div>
+          <div class="pct" id="progPct">0%</div>
+          <div class="bar"><i id="barFill"></i></div>
+          <div id="progText">0 of 0 completed</div>
+          <button class="reset" id="resetBtn">Reset Progress</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ HOW TO USE ============ -->
+    <div class="howto">
+      <div class="howto-ico">🧭</div>
+      <div>
+        <h3 id="howTitle">How to use this roadmap</h3>
+        <p id="howBody"></p>
+        <div class="lv-legend">
+          <span class="lv lv-1">Beginner</span>
+          <span class="lv lv-2">Intermediate</span>
+          <span class="lv lv-3">Advanced</span>
+          <span class="gem">⭐ Don't skip</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DON'T-SKIP BANNER ============ -->
+    <div class="skip-banner">
+      <span class="star">⭐</span>
+      <div>
+        <h3 id="skipTitle">The Small Things That Matter</h3>
+        <p id="skipDesc">These often-skipped topics quietly separate amateurs from professionals.</p>
+      </div>
+    </div>
+
+    <!-- ============ ROADMAP (rendered) ============ -->
+    <div id="roadmap"></div>
+
+    <div class="empty" id="empty" hidden>
+      <div class="big">🔍</div>
+      <p id="emptyMsg">No topics match your search.</p>
+    </div>
+
+    <!-- ============ WHY I BUILT THIS ============ -->
+    <section class="why" id="why">
+      <div class="kicker">// A note from the author</div>
+      <h2>Why I built <span class="grad">this</span></h2>
+      <p>When I started in cybersecurity, every roadmap I found was either a flat image with no depth, a paid course funnel, or a giant list of tools with zero guidance on <b>what to actually do</b>. I kept thinking: someone should build the roadmap I wished I had.</p>
+      <p>So I built it myself. Every topic here is a <b>mini-lesson</b>: what to understand, the exact hands-on steps to practice it, the tools you will actually touch, and free resources to go deeper. The ⭐ gems are the small things I watched students (including me) skip, then pay for later.</p>
+      <p>I made it <b>fully offline</b> because great learning should not need great internet. I translated the interface into <b>70+ languages</b> because talent is everywhere, and language should never be the wall. And your progress saves in your browser, because this is a journey you measure in months, not minutes.</p>
+      <p>If this roadmap helps even one person go from "where do I start" to their first real bounty, it was worth every hour.</p>
+      <div class="sig">~ Muhammad Izaz Haider</div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="author-card">
+        <div class="av">🛡️</div>
+        <div id="builtBy">Built with passion by</div>
+        <div class="author-name">Muhammad Izaz Haider</div>
+        <div id="role">Lover of AI × Offensive Security</div>
+        <div class="creds">
+          <span class="cred">🏆 <b>CSCB 2026</b> #1 Web (Junior)</span>
+          <span class="cred">🎯 <b>YesWeHack</b> hunter MIHX01</span>
+          <span class="cred">🎓 <b>Howest</b> MTS3-CS Cybersecurity</span>
+        </div>
+        <div class="author-links">
+          <a class="abtn primary" href="https://www.linkedin.com/in/muhammad-izaz-haider-091639314/" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 17V9.99H6V17h2.34zM7.17 8.86a1.36 1.36 0 1 0 0-2.71 1.36 1.36 0 0 0 0 2.71zM18 17v-3.84c0-2.05-.44-3.63-2.84-3.63-1.15 0-1.92.63-2.24 1.23h-.03V9.99H10.6V17h2.34v-3.47c0-.92.17-1.8 1.3-1.8 1.12 0 1.13 1.05 1.13 1.86V17H18z"/></svg>
+            <span id="contact">Connect on LinkedIn</span>
+          </a>
+          <a class="abtn ghost" href="https://www.mizazhaider-ceh.dev/" target="_blank" rel="noopener">🌐 Portfolio</a>
+          <a class="abtn ghost" href="https://github.com/mizazhaider-ceh" target="_blank" rel="noopener">💻 GitHub</a>
+        </div>
+      </div>
+      <p class="copyright">© <span id="yr"></span> OmniSec Roadmap: open-source for the global security community. For education and authorized testing only. Stay legal. Stay curious.</p>
+    </div>
+  </footer>
+
+  <button class="totop" id="toTop" title="Back to top" aria-label="Back to top">↑</button>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script src="js/roadmap-data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/app.js"></script>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
